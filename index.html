@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tirage Aléatoire pour Composition Musicale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+    		margin: 0;
+    		padding: 20px;
+    		display: flex;
+    		flex-direction: column; /* S'assurer que les éléments s'alignent verticalement */
+    		align-items: center; /* Centrer les conteneurs */
+    		justify-content: center;
+    		min-height: 100vh;
+            background-color: #e0f2f1; /* Fond en ton vert jade clair */
+            color: #004d40; /* Texte en ton vert jade foncé */
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            border: 2px solid #00695c; /* Bordure en ton vert jade plus foncé */
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #b2dfdb; /* Arrière-plan en ton vert jade */
+        }
+        .result, .add-item, .manage-items {
+        	width: 90%;
+        	max-width: 800px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #004d40;
+            border-radius: 5px;
+            background-color: #ffffff; /* Fond blanc pour les sections */
+        }
+        button {
+            background-color: #004d40; /* Boutons en ton vert jade foncé */
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #003d33; /* Changement de couleur au survol */
+        }
+        .list-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .list-item {
+            margin: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .list-item span {
+            margin-left: 10px;
+            cursor: pointer;
+            color: red;
+        }
+        select, input[type="text"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 20%;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Tirage Aléatoire pour Composition Musicale</h1><button onclick="tirer()">Lance un nouveau tirage 👍</button>
+
+
+            </div>
+                            <div class="result" id="result">
+            <p><strong>Ambiance:  </strong><span id="ambiance"></span></p>
+            <p><strong>Structure:  </strong><span id="structure"></span></p>
+            <p><strong>Durée:  </strong> <span id="duree"></span></p>
+            <p><strong>Tempo:  </strong> <span id="tempo"></span></p>
+            <p><strong>Signature rythmique:  </strong><span id="signature"></span></p>
+            <p><strong>Tonalité:  </strong><span id="tonalite"></span></p>
+            <p><strong>Modes/gammes:   </strong> <span id="modes"></span></p>
+            <p><strong>Qualité d'accord:  </strong><span id="qualite"></span></p>
+            <p><strong>Suite d'accords: </strong><span id="suite"></span></p>
+        </div>
+        <div class="add-item">
+            <h2>Ajouter des éléments</h2>
+            <div>
+                <label for="category">Catégorie:</label></br>
+                <select id="category">
+                    <option value="ambiances">Ambiance</option>
+                    <option value="structures">Structure</option>
+                    <option value="signatures">Signature rythmique</option>
+                    <option value="tonalites">Tonalité</option>
+                    <option value="modes">Modes/gammes</option>
+                    <option value="qualites">Qualité d'accord</option>
+                    <option value="suites">Suite d'accords</option>
+                </select>
+            </div>
+            <div></br>
+                <label for="new-item">Nouveaux éléments (séparés par des virgules):</label></br>
+                
+
+                <input type="text" id="new-item">
+                </br></br><button onclick="ajouterElements()">Ajouter</button>
+            </div>
+        </div>
+        <div class="manage-items">
+            <h2>Gérer les éléments</h2>
+            <div>
+                <label for="manage-category">Catégorie:</label>
+                <select id="manage-category" onchange="afficherElements()">
+                    <option value="ambiances">Ambiance</option>
+                    <option value="structures">Structure</option>
+                    <option value="signatures">Signature rythmique</option>
+                    <option value="tonalites">Tonalité</option>
+                    <option value="modes">Modes/gammes</option>
+                    <option value="qualites">Qualité d'accord</option>
+                    <option value="suites">Suite d'accords</option>
+                </select>
+            </div>
+            <div id="items-list" class="list-container"></div>
+        </div>
+    </div>
+    <script>
+        const ambiances = ["Joyeuse", "Mélancolique", "Triste", "Mystérieuse", "Épique", "Paisible", "Planante", "Fuite", "Peur", "Combat", "Colère"];
+        
+        const structures = ["AB", "ABA", "ABACABA", "AABA", "ABCA", "ABAB", "AAB", "ABACA", "ABC", "ABABCB", "AABBA", "ABABAC"];
+        
+        const signatures = ["4/4", "3/4", "6/8", "12/8", "5/4", "7/8", "9/8", "2/4", "3/8", "5/8", "7/4", "11/8", "6/4", "4/8", "2/2", "3/2", "9/4", "12/4", "5/2", "7/2"];
+        
+        const tonalites = ["Do", "Do#", "Ré", "Ré#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"];
+        
+        const modes = ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Éolien", "Locrien", "Harmonique mineur", "Pentatonique mineur", "Pentatonique majeur", "Flamenco", "Hirajoshi", "In Sen", "Iwato", "Kumoi", "Pelog", "Double harmonique", "Harmonique majeur", "Acoustique espagnol", "Byzantine"];
+        
+        const qualites = ["Tétrade", "Powercord", "Enrichi (voir annexe1)", "Étendu (voir annexe1)", "Suspendu (voir annexe1)"];
+        
+        const suites = ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "1•6•4•5", "2•3•6•5", "1•2•4•5", "1•6•3•5", "1•3•4•5", "1•7•4•1", "1•5•6•3", "2•4•1•5", "1•4•7•4", "1•3•6•2", "1•7•6•5", "2•3•2•5", "2•5•3•5"];
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomDuration() {
+            const minutes = getRandomInt(2, 20);
+            const seconds = getRandomInt(0, 59);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        function tirer() {
+            document.getElementById("ambiance").innerText = ambiances[Math.floor(Math.random() * ambiances.length)];
+            document.getElementById("structure").innerText = structures[Math.floor(Math.random() * structures.length)];
+            document.getElementById("duree").innerText = getRandomDuration();
+            document.getElementById("tempo").innerText = getRandomInt(40, 200);
+            document.getElementById("signature").innerText = signatures[Math.floor(Math.random() * signatures.length)];
+            document.getElementById("tonalite").innerText = tonalites[Math.floor(Math.random() * tonalites.length)];
+            document.getElementById("modes").innerText = modes[Math.floor(Math.random() * modes.length)];
+            document.getElementById("qualite").innerText = qualites[Math.floor(Math.random() * qualites.length)];
+            document.getElementById("suite").innerText = suites[Math.floor(Math.random() * suites.length)];
+        }
+
+        function ajouterElements() {
+            const category = document.getElementById("category").value;
+            const newItem = document.getElementById("new-item").value;
+
+            if (newItem) {
+                const newItems = newItem.split(',').map(item => item.trim());
+                switch(category) {
+                    case "ambiances":
+                        ambiances.push(...newItems);
+                        break;
+                    case "structures":
+                        structures.push(...newItems);
+                        break;
+                    case "signatures":
+                        signatures.push(...newItems);
+                        break;
+                    case "tonalites":
+                        tonalites.push(...newItems);
+                        break;
+                    case "modes":
+                        modes.push(...newItems);
+                        break;
+                    case "qualites":
+                        qualites.push(...newItems);
+                        break;
+                    case "suites":
+                        suites.push(...newItems);
+                        break;
+                }
+                document.getElementById("new-item").value = "";
+                alert("Éléments ajoutés avec succès !");
+            } else {
+                alert("Veuillez entrer des éléments à ajouter.");
+            }
+        }
+
+        function afficherElements() {
+            const category = document.getElementById("manage-category").value;
+            let items = [];
+            switch(category) {
+                case "ambiances":
+                    items = ambiances;
+                    break;
+                case "structures":
+                    items = structures;
+                    break;
+                case "signatures":
+                    items = signatures;
+                    break;
+                case "tonalites":
+                    items = tonalites;
+                    break;
+                case "modes":
+                    items = modes;
+                    break;
+                case "qualites":
+                    items = qualites;
+                    break;
+                case "suites":
+                    items = suites;
+                    break
+            }
+
+            const itemsList = document.getElementById("items-list");
+            itemsList.innerHTML = "";  // Clear existing items
+
+            items.forEach((item, index) => {
+                const itemElement = document.createElement("div");
+                itemElement.className = "list-item";
+                itemElement.innerHTML = `${item} <span onclick="supprimerElement('${category}', ${index})">&times;</span>`;
+                itemsList.appendChild(itemElement);
+            });
+        }
+
+        function supprimerElement(category, index) {
+            switch(category) {
+                case "ambiances":
+                    ambiances.splice(index, 1);
+                    break;
+                case "structures":
+                    structures.splice(index, 1);
+                    break;
+                case "signatures":
+                    signatures.splice(index, 1);
+                    break;
+                case "tonalites":
+                    tonalites.splice(index, 1);
+                    break;
+                case "modes":
+                    modes.splice(index, 1);
+                    break;
+                case "qualites":
+                    qualites.splice(index, 1);
+                    break;
+                case "suites":
+                    suites.splice(index, 1);
+                    break;
+            }
+            afficherElements();  // Refresh the displayed list
+        }
+    </script>
+</body>
+</html>
