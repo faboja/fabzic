@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tirage Aléatoire pour Composition Musicale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            color: #004d40;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin-bottom: 20px;
+            border: 2px solid #00695c;
+            padding: 30px;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 77, 64, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #004d40;
+            font-size: 1.8em;
+        }
+
+        h2 {
+            color: #00695c;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #004d40 0%, #00695c 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 77, 64, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 77, 64, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .result {
+            width: 90%;
+            max-width: 900px;
+            margin-bottom: 20px;
+            padding: 25px;
+            border: 2px solid #00695c;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 77, 64, 0.1);
+        }
+
+        .result p {
+            margin: 12px 0;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result strong {
+            color: #00695c;
+            min-width: 180px;
+        }
+
+        .result span {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #b2dfdb 0%, #80cbc4 100%);
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .result span.spinning {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotateY(0deg); opacity: 0.5; }
+            50% { transform: rotateY(180deg); opacity: 0.3; }
+            100% { transform: rotateY(360deg); opacity: 1; }
+        }
+
+        .add-item, .manage-items {
+            width: 90%;
+            max-width: 900px;
+            margin-bottom: 20px;
+            padding: 25px;
+            border: 2px solid #00695c;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 77, 64, 0.1);
+        }
+
+        select, input[type="text"] {
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #b2dfdb;
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #00695c;
+        }
+
+        .list-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .list-item {
+            padding: 8px 15px;
+            border: 2px solid #b2dfdb;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #e0f2f1;
+            transition: all 0.3s ease;
+        }
+
+        .list-item:hover {
+            background-color: #b2dfdb;
+            border-color: #00695c;
+        }
+
+        .list-item span {
+            cursor: pointer;
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+
+        .list-item span:hover {
+            color: #b71c1c;
+        }
+
+        label {
+            font-weight: bold;
+            color: #00695c;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #2e7d32;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container, .result, .add-item, .manage-items {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            .result p {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .result strong {
+                min-width: auto;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 30px;
+            border: 2px solid #00695c;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Tirage Aléatoire pour Composition Musicale 🎵</h1>
+        <div class="button-group">
+            <button onclick="tirer()">🎲 Lancer un tirage</button>
+        </div>
+    </div>
+
+    <div class="result" id="result">
+        <p><strong>🎭 Ambiance:</strong><span id="ambiance">-</span></p>
+        <p><strong>🏗️ Structure:</strong><span id="structure">-</span></p>
+        <p><strong>⏱️ Durée:</strong><span id="duree">-</span></p>
+        <p><strong>⚡ Tempo:</strong><span id="tempo">-</span></p>
+        <p><strong>🎼 Signature rythmique:</strong><span id="signature">-</span></p>
+        <p><strong>🎹 Tonalité:</strong><span id="tonalite">-</span></p>
+        <p><strong>🎶 Modes/gammes:</strong><span id="modes">-</span></p>
+        <p><strong>🎸 Qualité d'accord:</strong><span id="qualite">-</span></p>
+        <p><strong>🎵 Suite d'accords:</strong><span id="suite">-</span></p>
+    </div>
+
+    <div class="add-item">
+        <h2>➕ Ajouter des éléments</h2>
+        <label for="category">Catégorie:</label>
+        <select id="category">
+            <option value="ambiances">Ambiance</option>
+            <option value="structures">Structure</option>
+            <option value="signatures">Signature rythmique</option>
+            <option value="tonalites">Tonalité</option>
+            <option value="modes">Modes/gammes</option>
+            <option value="qualites">Qualité d'accord</option>
+            <option value="suites">Suite d'accords</option>
+        </select>
+        <label for="new-item">Nouveaux éléments (séparés par des virgules):</label>
+        <input type="text" id="new-item" placeholder="Ex: Romantique, Énergique, Contemplative">
+        <div class="error-message" id="add-error"></div>
+        <div class="success-message" id="add-success"></div>
+        <button onclick="ajouterElements()">Ajouter</button>
+    </div>
+
+    <div class="manage-items">
+        <h2>🗂️ Gérer les éléments</h2>
+        <label for="manage-category">Catégorie:</label>
+        <select id="manage-category" onchange="afficherElements()">
+            <option value="ambiances">Ambiance</option>
+            <option value="structures">Structure</option>
+            <option value="signatures">Signature rythmique</option>
+            <option value="tonalites">Tonalité</option>
+            <option value="modes">Modes/gammes</option>
+            <option value="qualites">Qualité d'accord</option>
+            <option value="suites">Suite d'accords</option>
+        </select>
+        <div id="items-list" class="list-container"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="javascript:void(0);" onclick="showResetModal();" style="color: #00695c; text-decoration: none; font-size: 0.9em; opacity: 0.7; transition: opacity 0.3s ease; cursor: pointer;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">🔄 Effacer tous les éléments</a>
+        </div>
+    </div>
+
+    <div class="manage-items">
+        <h2>🎛️ Gérer les catégories</h2>
+        <label for="new-category-name">Nom de la nouvelle catégorie:</label>
+        <input type="text" id="new-category-name" placeholder="Ex: Instruments, Effets, Ambiance sonore">
+        <div class="error-message" id="category-error"></div>
+        <div class="success-message" id="category-success"></div>
+        <button onclick="ajouterCategorie()">Ajouter la catégorie</button>
+        
+        <h3 style="margin-top: 25px; color: #00695c;">Catégories existantes:</h3>
+        <div id="categories-list" class="list-container"></div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+        <a href="javascript:void(0);" onclick="showFullResetModal();" style="color: #00695c; text-decoration: none; font-size: 0.9em; opacity: 0.7; transition: opacity 0.3s ease; cursor: pointer;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">♻️ Rétablir les paramètres par défaut</a>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>⚠️ Confirmation</h2>
+            <p id="modal-message"></p>
+            <div class="modal-buttons">
+                <button onclick="confirmAction()">Confirmer</button>
+                <button onclick="closeModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultData = {
+            ambiances: ["Joyeuse", "Mélancolique", "Triste", "Mystérieuse", "Épique", "Paisible", "Planante", "Fuite", "Peur", "Combat", "Colère"],
+            structures: ["AB", "ABA", "ABACABA", "AABA", "ABCA", "ABAB", "AAB", "ABACA", "ABC", "ABABCB", "AABBA", "ABABAC"],
+            signatures: ["4/4", "3/4", "6/8", "12/8", "5/4", "7/8", "9/8", "2/4", "3/8", "5/8", "7/4", "11/8", "6/4", "4/8", "2/2", "3/2", "9/4", "12/4", "5/2", "7/2"],
+            tonalites: ["Do", "Do#", "Ré", "Ré#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"],
+            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Éolien", "Locrien", "Harmonique mineur", "Pentatonique mineur", "Pentatonique majeur", "Flamenco", "Hirajoshi", "In Sen", "Iwato", "Kumoi", "Pelog", "Double harmonique", "Harmonique majeur", "Acoustique espagnol", "Byzantine"],
+            qualites: ["Triade", "Tétrade", "Powercord", "Enrichi", "Altéré"],
+            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "1•6•4•5", "2•3•6•5", "1•2•4•5", "1•6•3•5", "1•3•4•5", "1•7•4•1", "1•5•6•3", "2•4•1•5", "1•4•7•4", "1•3•6•2", "1•7•6•5", "2•3•2•5", "2•5•3•5"]
+        };
+
+        const defaultCategories = {
+            ambiances: { label: "Ambiance", icon: "🎭" },
+            structures: { label: "Structure", icon: "🏗️" },
+            signatures: { label: "Signature rythmique", icon: "🎼" },
+            tonalites: { label: "Tonalité", icon: "🎹" },
+            modes: { label: "Modes/gammes", icon: "🎶" },
+            qualites: { label: "Qualité d'accord", icon: "🎸" },
+            suites: { label: "Suite d'accords", icon: "🎵" }
+        };
+
+        const specialCategories = {
+            duree: { label: "Durée", icon: "⏱️", type: "duration" },
+            tempo: { label: "Tempo", icon: "⚡", type: "number", min: 40, max: 200 }
+        };
+
+        let data = {};
+        let categories = {};
+        let modalCallback = null;
+
+        function initData() {
+            const storedData = localStorage.getItem('musicCompositionData');
+            const storedCategories = localStorage.getItem('musicCompositionCategories');
+            
+            if (storedData) {
+                data = JSON.parse(storedData);
+            } else {
+                data = JSON.parse(JSON.stringify(defaultData));
+                saveData();
+            }
+
+            if (storedCategories) {
+                categories = JSON.parse(storedCategories);
+            } else {
+                categories = JSON.parse(JSON.stringify(defaultCategories));
+                saveCategories();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('musicCompositionData', JSON.stringify(data));
+        }
+
+        function saveCategories() {
+            localStorage.setItem('musicCompositionCategories', JSON.stringify(categories));
+        }
+
+        function getCategory(categoryName) {
+            return data[categoryName] || [];
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomDuration() {
+            const minutes = getRandomInt(2, 20);
+            const seconds = getRandomInt(0, 59);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function animateResult(elementId, value, delay = 0) {
+            setTimeout(() => {
+                const element = document.getElementById(elementId);
+                element.classList.add('spinning');
+                setTimeout(() => {
+                    element.innerText = value;
+                    element.classList.remove('spinning');
+                }, 250);
+            }, delay);
+        }
+
+        function tirer() {
+            const allCategories = Object.keys(categories);
+            let delay = 0;
+            
+            allCategories.forEach(key => {
+                const element = getRandomElement(getCategory(key));
+                animateResult(key, element, delay);
+                delay += 100;
+            });
+
+            animateResult('duree', getRandomDuration(), delay);
+            delay += 100;
+            animateResult('tempo', getRandomInt(40, 200), delay);
+
+            updateResultDisplay();
+        }
+
+        function updateResultDisplay() {
+            const resultDiv = document.getElementById('result');
+            let html = '';
+            
+            Object.keys(categories).forEach(key => {
+                const cat = categories[key];
+                html += `<p><strong>${cat.icon} ${cat.label}:</strong><span id="${key}">-</span></p>`;
+            });
+
+            html += `<p><strong>⏱️ Durée:</strong><span id="duree">-</span></p>`;
+            html += `<p><strong>⚡ Tempo:</strong><span id="tempo">-</span></p>`;
+
+            resultDiv.innerHTML = html;
+        }
+
+        function updateCategorySelects() {
+            const categorySelect = document.getElementById('category');
+            const manageSelect = document.getElementById('manage-category');
+            
+            categorySelect.innerHTML = '';
+            manageSelect.innerHTML = '';
+
+            Object.keys(categories).forEach(key => {
+                const cat = categories[key];
+                const option1 = document.createElement('option');
+                option1.value = key;
+                option1.textContent = cat.label;
+                categorySelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = key;
+                option2.textContent = cat.label;
+                manageSelect.appendChild(option2);
+            });
+        }
+
+        function afficherCategories() {
+            const categoriesList = document.getElementById('categories-list');
+            categoriesList.innerHTML = '';
+
+            Object.keys(categories).forEach(key => {
+                const cat = categories[key];
+                const itemElement = document.createElement('div');
+                itemElement.className = 'list-item';
+                itemElement.innerHTML = `${cat.icon} ${cat.label} <span onclick="showDeleteCategoryModal('${key}', '${cat.label.replace(/'/g, "\\'")}')">&times;</span>`;
+                categoriesList.appendChild(itemElement);
+            });
+        }
+
+        function ajouterCategorie() {
+            const name = document.getElementById('new-category-name').value.trim();
+
+            if (!name) {
+                showMessage('category-error', 'Le nom de la catégorie ne peut pas être vide.');
+                return;
+            }
+
+            const key = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+
+            if (categories[key]) {
+                showMessage('category-error', 'Cette catégorie existe déjà.');
+                return;
+            }
+
+            const icon = '🎵';
+            categories[key] = { label: name, icon: icon };
+            data[key] = [];
+            
+            saveCategories();
+            saveData();
+
+            document.getElementById('new-category-name').value = '';
+            
+            showMessage('category-success', `Catégorie "${name}" ajoutée avec succès !`);
+            
+            afficherCategories();
+            updateCategorySelects();
+            updateResultDisplay();
+        }
+
+        function showDeleteCategoryModal(key, name) {
+            document.getElementById('modal-message').innerText = `Veux-tu vraiment supprimer la catégorie "${name}" et tous ses éléments ?`;
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = () => supprimerCategorie(key);
+        }
+
+        function supprimerCategorie(key) {
+            delete categories[key];
+            delete data[key];
+            
+            saveCategories();
+            saveData();
+            
+            afficherCategories();
+            updateCategorySelects();
+            updateResultDisplay();
+            afficherElements();
+        }
+
+        function showResetModal() {
+            console.log('showResetModal appelée');
+            document.getElementById('modal-message').innerText = 'Veux-tu vraiment vider toutes les listes dans toutes les catégories ? Les catégories seront conservées mais tous les éléments seront supprimés.';
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = function() {
+                console.log('modalCallback exécuté');
+                resetAllLists();
+            };
+        }
+
+        function resetAllLists() {
+            console.log('resetAllLists appelée');
+            console.log('Données avant:', JSON.stringify(data));
+            
+            // Vider toutes les listes
+            Object.keys(data).forEach(key => {
+                data[key] = [];
+            });
+            
+            console.log('Données après:', JSON.stringify(data));
+            
+            // Sauvegarder les modifications
+            saveData();
+            console.log('Données sauvegardées dans localStorage');
+            
+            // Rafraîchir l'affichage
+            afficherElements();
+            console.log('Affichage rafraîchi');
+            
+            // Afficher le message de confirmation
+            setTimeout(() => {
+                showMessage('add-success', 'Toutes les listes ont été vidées.');
+            }, 300);
+        }
+
+        function showFullResetModal() {
+            document.getElementById('modal-message').innerText = 'Veux-tu vraiment rétablir tous les paramètres par défaut ? Cela restaurera toutes les catégories et éléments d\'origine. Cette action est irréversible.';
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = fullReset;
+        }
+
+        function fullReset() {
+            data = JSON.parse(JSON.stringify(defaultData));
+            categories = JSON.parse(JSON.stringify(defaultCategories));
+            
+            saveData();
+            saveCategories();
+            
+            afficherCategories();
+            updateCategorySelects();
+            updateResultDisplay();
+            afficherElements();
+            
+            showMessage('category-success', 'Tous les paramètres ont été rétablis aux valeurs par défaut.');
+        }
+
+        function validateInput(input) {
+            if (!input || input.trim() === '') {
+                return { valid: false, message: 'Le champ ne peut pas être vide.' };
+            }
+            const items = input.split(',').map(item => item.trim()).filter(item => item !== '');
+            if (items.length === 0) {
+                return { valid: false, message: 'Aucun élément valide trouvé.' };
+            }
+            return { valid: true, items };
+        }
+
+        function showMessage(elementId, message, duration = 3000) {
+            const element = document.getElementById(elementId);
+            element.innerText = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, duration);
+        }
+
+        function ajouterElements() {
+            const category = document.getElementById("category").value;
+            const newItem = document.getElementById("new-item").value;
+
+            const validation = validateInput(newItem);
+            if (!validation.valid) {
+                showMessage('add-error', validation.message);
+                return;
+            }
+
+            const existingItems = getCategory(category);
+            const duplicates = [];
+            const added = [];
+
+            validation.items.forEach(item => {
+                if (existingItems.includes(item)) {
+                    duplicates.push(item);
+                } else {
+                    existingItems.push(item);
+                    added.push(item);
+                }
+            });
+
+            if (added.length > 0) {
+                data[category] = existingItems;
+                saveData();
+                document.getElementById("new-item").value = "";
+                
+                let message = `${added.length} élément(s) ajouté(s) avec succès !`;
+                if (duplicates.length > 0) {
+                    message += ` (${duplicates.length} doublon(s) ignoré(s))`;
+                }
+                showMessage('add-success', message);
+                
+                if (document.getElementById("manage-category").value === category) {
+                    afficherElements();
+                }
+            } else {
+                showMessage('add-error', 'Tous les éléments existent déjà.');
+            }
+        }
+
+        function afficherElements() {
+            const category = document.getElementById("manage-category").value;
+            const items = getCategory(category);
+            const itemsList = document.getElementById("items-list");
+            itemsList.innerHTML = "";
+
+            if (items.length === 0) {
+                itemsList.innerHTML = '<p style="color: #666;">Aucun élément dans cette catégorie.</p>';
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const itemElement = document.createElement("div");
+                itemElement.className = "list-item";
+                itemElement.innerHTML = `${item} <span onclick="showDeleteModal('${category}', ${index}, '${item.replace(/'/g, "\\'")}')">&times;</span>`;
+                itemsList.appendChild(itemElement);
+            });
+        }
+
+        function showDeleteModal(category, index, itemName) {
+            document.getElementById('modal-message').innerText = `Veux-tu vraiment supprimer "${itemName}" ?`;
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = () => supprimerElement(category, index);
+        }
+
+        function showResetModal() {
+            document.getElementById('modal-message').innerText = 'Veux-tu vraiment réinitialiser toutes les listes aux valeurs par défaut ? Cette action est irréversible.';
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = resetToDefault;
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            modalCallback = null;
+        }
+
+        function confirmAction() {
+            if (modalCallback) {
+                modalCallback();
+                afficherElements();
+            }
+            closeModal();
+        }
+
+        function supprimerElement(category, index) {
+            data[category].splice(index, 1);
+            saveData();
+            afficherElements();
+        }
+
+        function resetToDefault() {
+            const category = document.getElementById("manage-category").value;
+            if (defaultData[category]) {
+                data[category] = [...defaultData[category]];
+                saveData();
+                afficherElements();
+                showMessage('add-success', 'La liste a été réinitialisée aux valeurs par défaut.');
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        initData();
+        afficherElements();
+        afficherCategories();
+        updateCategorySelects();
+        updateResultDisplay();
+    </script>
+</body>
+</html>
