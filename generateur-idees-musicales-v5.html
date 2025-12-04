@@ -554,20 +554,33 @@
         // --- DONNÉES PAR DÉFAUT (MISES À JOUR AVEC VOTRE FICHIER CSV ET CORRIGÉES) ---
         const defaultData = {
             // Catégories du CSV (Ambiance, Structure, Signature, Style, Figure)
+
             ambiances: ["Joie", "Mélancolie", "Triste", "Mystère", "Épique", "Quiétude", "Planant", "Fuite", "Peur", "Combat", "Colère", "Sombre"],
-            structures: ["C R", "C R C", "C R C P C R C", "C C R R", "C R P C", "I C P R R C PR R P S PR R O", "I C PR C PR R P/S R"],
-            signatures: ["4/4", "3/4", "6/8", "12/8", "5/4", "9/4", "12/4", "5/2", "7/2"],
-            figures: ["blanche | noire | noire", "noire | blanche | noire", "noire | noire | blanche", "noire | noire | noire | noire", "blanche | 2 croches", "noire | demi-soupir | noire | noire", "noire | noire demi-soupir | noire", "noire | noire | noire demi-soupir", "soupir | noire | noire | noire", "noire | soupir | noire | noire", "noire | noire | soupir | noire", "noire | noire | noire | soupir", "blanche | soupir | noire", "soupir | blanche | noire", "noire | blanche | soupir", "soupir | blanche | soupir", "soupir | noire | noire", "blanche | noire | soupir"],
-            styles: ["Metal", "Rock", "Hardrock", "Chanson à texte", "Jazz", "Classique", "Pop", "Électro", "Ambient", "Folk", "Reggae", "Blues", "Funk", "Hip-hop", "R&B", "Gospel", "Opéra", "Techno"],
+
+            structures: ["C R","C R C","C R C P C R C","C C R R","C R P C","C R C R","C C R","C R C P C","C R P","C R C R P R","C C R R C","C R C R C P","C C C","C C R C R R P R O","I C C PR R C PR R S PR R R","I C C PR R S P PR R S R O","I C PR R C PR  R P S PR R O","I C PR C PR R P/S R"],
+
+            signatures: ["4/4","3/4","6/8","12/8","5/4","7/8","9/8","2/4","3/8","5/8","7/4","11/8","6/4","4/8","2/2","3/2","9/4","12/4","5/2","7/2"],
+
+            figures: ["blanche | noire | noire","noire | blanche | noire","noire | noire | blanche","noire | noire | noire | noire","blanche | 2 croches | 2 croches,"2 croches | 2 croches | blanche","noire | noire | 4 croches","4 croches | noire | noire","noire | 4 croches | noire","4 croches | noire | 2 croches | 2 croches",
+"noire | noire | noire | 2 croches | 2 croches","noire | 2 croches | 2 croches | noire | noire","2 croches | 2 croches | noire | noire | noire","2 croches | 2 croches | 2 croches | 2 croches","blanche pointée | noire","demi‑soupir | noire noire | noire","noire | demi‑soupir | noire | noire",
+"noire | noire demi‑soupir | noire","noire | noire | noire demi‑soupir","soupir | noire | noire | noire","noire | soupir | noire | noire","noire | noire | soupir | noire","noire | noire | noire | soupir","blanche | soupir | noire","soupir | blanche | noire","noire | blanche | soupir","soupir | blanche | soupir","soupir | blanche | noire","blanche | soupir | soupir","demi‑soupir | 2 croches | noire | noire",
+"noire | 2 croches | demi‑soupir | noire","2 croches | demi‑soupir | 2 croches | noire","2 croches | 2 croches | demi‑soupir | noire","noire | soupir | 2 croches | 2 croches","2 croches | 2 croches | soupir | noire","soupir | 4 croches | noire","4 croches | soupir | noire","soupir | soupir | blanche","demi‑soupir | 4 croches | 2 croches | 2 croches","4 croches | 2 croches | 2 croches | demi‑soupir"],
+
+            styles: ["Metal","Rock","Hardrock","Chanson à texte","Jazz","Electro","Blues","Ambiant","Lo-Fi","Classique","Folk","Funk","Disco","Reggae"],
             
-            // Nouvelles catégories du CSV
-            instruments: ["Piano classique", "Guitare classique", "Guitare folk", "Guitare électrique", "Synthétiseur", "Harpe", "Piano électrique", "Guitare basse", "Accordéon", "Orgue", "Trombone", "Tuba", "Bongos", "Cajón", "Congas", "Darbouka", "Djembe"],
+            instruments: ["Piano classique","Guitare classique","Guitare folk","Guitare électrique","Synthétiseur","Flute","Tambour","Violon","Flûte traversière","Saxophone","Batterie","Trompette","Clarinette","Harmonica","Violoncelle","Xylophone / Marimba","Harpe","Piano électrique","Guitare basse","Accordéon","Orgue","Trombone","Tuba","Bongos","Cajón","Congas","Darbouka","Djembe"],
+
             tonalites: ["Do • C", "Do# / Réb • C#/Db", "Ré • D", "Ré# / Mib • D#/Eb", "Mi • E", "Fa • F", "Fa# / Solb • F#/Gb", "Sol • G", "Sol# / Lab • G#/Ab", "La • A", "La# / Sib • A#/Bb", "Si • B"],
-            majeurmineur: ["Majeur", "mineur"], // CORRECTION: "Mineur" en "mineur"
-            qualites: ["Triade", "Tétrade", "Powercord", "Enrichi", "Altéré", "Suspendu", "Quartal", "Penta", "Cluster", "Augmenté", "Diminué"],
-            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "2•3•2•5", "2•5•3•5"],
-            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Harmonique majeur", "Acoustique espagnol", "Byzantine"],
-            modulations: ["Accord pivot", "Glissement chromatique de notes", "Dominante secondaire • V de V", "Dominante secondaire • IV de IV", "À 11h45 sur cycle des quintes", "À partir du degré I", "Avec accord parallèle vers cadence parfaite", "Par accord diminué", "Changement tonal", "Par l’armure", "Aucune"]
+
+            majeurmineur: ["Majeur", "mineur"],
+
+            qualites: ["Triade","Tétrade","Powercord","Enrichi","Altéré","Suspendu"],
+
+            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "1•6•4•5", 2•3•6•5, "1•2•4•5","1•6•3•5","1•3•4•5","1•7•4•1","1•5•6•3","2•4•1•5","1•4•7•4","1•3•6•2","1•7•6•5","2•3•2•5","2•5•3•5","2•3•2•5", "2•5•3•5"],
+
+            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Éolien", "Locrien", "Harmonique mineur", "Harmonique majeur", "Acoustique espagnol", "Byzantine", "Pentatonique mineur,", "Pentatonique majeur", "Flamenco", "Hirajoshi", "In Sen", "Iwato", "Kumoi", "Pelog", "Double harmonique"],
+
+            modulations: ["Accord pivot","Glissement chromatique de notes,"Dominante  secondaire • V de V","Dominante  secondaire • IV de IV","Dominante  secondaire • III de III","Dominante  secondaire • VI de VI","Accord d’emprunt","Dominante  chromatique","Chromatique par l’accord de médiante","Harmonie négative","Tritonique","Note pivot","Par le V•I","Par gammes relatives","D’un demi-ton ou d’un ton","Par rupture","À 11h45 sur cycle des quintes","À partir du degré I","Avec accord parallèle vers cadence parfaite","Par accord diminué","Changement tonal","Par l’armure","Aucune"]
         };
 
         const defaultCategories = {
@@ -577,14 +590,11 @@
             tonalites: { label: "Tonalité", icon: "🎹" },
             modes: { label: "Mode/Gamme", icon: "🎶" },
             qualites: { label: "Qualité d'accord", icon: "🎼" },
-            suites: { label: "Suite d’accords", icon: "🔄" },
-            // CHANGEMENT: Label et Icon pour Signature
+            suites: { label: "Suite d’accords", icon: "➡️" },
             signatures: { label: "Signature", icon: "✍🏻" }, 
-            // CHANGEMENT: Label pour Figure
             figures: { label: "Figure", icon: "♩" }, 
-            // NOUVELLES CATÉGORIES DU CSV
-            instruments: { label: "Instruments maître", icon: "🎺" },
-            majeurmineur: { label: "Majeur ou mineur", icon: "⚖️" },
+            instruments: { label: "Instruments maître", icon: "🎹" },
+            majeurmineur: { label: "Majeur ou mineur", icon: "☯️" },
             modulations: { label: "Modulation", icon: "➿" }
         };
 
