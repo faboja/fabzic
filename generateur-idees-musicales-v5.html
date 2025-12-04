@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'idées musicales V5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00695c;
+            --primary-dark: #004d40;
+            --secondary: #b2dfdb;
+            --accent: #d32f2f;
+            --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 32px rgba(0, 77, 64, 0.1);
+            
+            /* Couleur unique pour les sections */
+            --section-title-color: var(--primary-dark); 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: var(--primary-dark);
+        }
+
+        .container, .result, .manage-section, .result-section-group {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary);
+            padding: 25px;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        
+        .result {
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* Espace entre les groupes de sections */
+            padding: 25px 25px 5px 25px; /* Ajustement du padding bas */
+        }
+
+        .result-section-group {
+            padding: 0;
+            border: none;
+            background: none;
+            box-shadow: none;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            font-size: 1.8em;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 0;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* STYLE POUR LES TITRES DE SECTION (Couleur unique) */
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            padding: 10px 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--primary); /* Bordure plus fine */
+            color: var(--section-title-color); /* Texte vert foncé */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Boutons */
+        button {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 77, 64, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 77, 64, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #fff;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        /* Resultats */
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 105, 92, 0.1);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .result-value-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 2;
+            justify-content: flex-end;
+        }
+
+        .result-value {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #b2dfdb 0%, #80cbc4 100%);
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: right;
+            min-width: 100px;
+            display: flex;
+            justify-content: center;
+            /* Permet le retour à la ligne pour les multiples éléments */
+            white-space: normal; 
+            text-align: center;
+        }
+
+        /* Lock Button */
+        .lock-btn {
+            background: none;
+            box-shadow: none;
+            padding: 5px;
+            color: #ccc;
+            min-width: auto;
+            border: 1px solid transparent;
+        }
+        .lock-btn:hover {
+            background: none;
+            transform: scale(1.1);
+            color: var(--primary);
+            box-shadow: none;
+        }
+        .lock-btn.locked {
+            color: var(--accent);
+        }
+
+        .spinning {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotateX(0deg); opacity: 0.5; }
+            50% { transform: rotateX(90deg); opacity: 0.3; }
+            100% { transform: rotateX(0deg); opacity: 1; }
+        }
+
+        /* Inputs & Forms */
+        select, input[type="text"], input[type="number"] { /* Ajout input[type="number"] */
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary);
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="number"] {
+             max-width: 150px; /* Limiter la largeur des inputs numériques */
+             text-align: center;
+        }
+
+        select:focus, input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Specific margin for part select */
+        label[for="new-category-part"] {
+            display: block; 
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* List Items (Tags) */
+        .list-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .list-item {
+            padding: 6px 12px;
+            border: 1px solid var(--secondary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #e0f2f1;
+            font-size: 0.9em;
+        }
+
+        .list-item span.delete-btn {
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .list-item span.delete-btn:hover {
+            color: #b71c1c;
+        }
+
+        /* Accordion / Collapsible */
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            user-select: none;
+        }
+        .collapsible-header:hover {
+            opacity: 0.8;
+        }
+        .collapsible-content {
+            display: none;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            animation: slideDown 0.3s ease-out;
+        }
+        .collapsible-content.active {
+            display: block;
+        }
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+        .active .arrow {
+            transform: rotate(180deg);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Messages */
+        .error-message { color: var(--accent); display: none; margin-top: 5px; font-size: 0.9em;}
+        .success-message { color: #2e7d32; display: none; margin-top: 5px; font-size: 0.9em;}
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10vh auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-scrollable-content {
+            max-height: 40vh;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .history-modal .modal-content { max-width: 700px; max-height: 80vh; overflow-y: auto; }
+        
+        .history-item {
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Checkbox styles for clear lists modal */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .checkbox-label:hover {
+            background-color: #eee;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+            min-width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 2000;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .result-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .result-value-container { width: 100%; justify-content: space-between; }
+            .button-group { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Générateur d'idées musicales</h1>
+        <div class="button-group">
+            <button onclick="tirer()">🎲 Lancer le dé</button>
+            <button class="secondary" onclick="copierResultat()">📋 Copier</button>
+            <button class="secondary" onclick="sauvegarderTirage()">💾 Sauver</button>
+            <button class="secondary" onclick="afficherHistorique()">📚 Historique</button>
+        </div>
+    </div>
+
+    <!-- Zone de résultat dynamique -->
+    <div class="result" id="result-container">
+        <!-- Le contenu sera généré par JS, structuré en sections -->
+    </div>
+    
+    <!-- Section Options de Tirage (Pliable) -->
+    <div class="manage-section">
+        <div class="collapsible-header" onclick="toggleSection('options-section')">
+            <h2>⚙️ Options de tirage</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div id="options-section" class="collapsible-content">
+            <p style="margin-bottom: 15px; color: #555;">Sélectionnez le nombre d'éléments à tirer pour les catégories spécifiques (entre 1 et 5). Les résultats multiples seront séparés par un `|`.</p>
+
+            <label for="count-figures" style="display: block; margin-top: 10px; font-weight: bold;">Figure (Nombre d'idées):</label>
+            <input type="number" id="count-figures" min="1" max="5" value="1" onchange="updateDrawCount('figures', this.value)">
+
+            <label for="count-suites" style="display: block; margin-top: 10px; font-weight: bold;">Suite d’accords (Nombre d'idées):</label>
+            <input type="number" id="count-suites" min="1" max="5" value="1" onchange="updateDrawCount('suites', this.value)">
+
+            <label for="count-modulations" style="display: block; margin-top: 10px; font-weight: bold;">Modulation (Nombre d'idées):</label>
+            <input type="number" id="count-modulations" min="1" max="5" value="1" onchange="updateDrawCount('modulations', this.value)">
+        </div>
+    </div>
+
+    <!-- Section Ajout (Pliable) -->
+    <div class="manage-section">
+        <div class="collapsible-header" onclick="toggleSection('add-section')">
+            <h2>➕ Ajouter des éléments</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div id="add-section" class="collapsible-content">
+            <label for="category">Catégorie:</label>
+            <select id="category"></select>
+            
+            <label for="new-item">Nouveaux éléments (séparés par virgules):</label>
+            <input type="text" id="new-item" placeholder="Ex: Romantique, Énergique, Jazz Fusion">
+            
+            <div class="button-group">
+                <button onclick="ajouterElements()">Ajouter</button>
+            </div>
+            <div class="error-message" id="add-error"></div>
+            <div class="success-message" id="add-success"></div>
+        </div>
+    </div>
+
+    <!-- Section Gestion (Pliable) -->
+    <div class="manage-section">
+        <div class="collapsible-header" onclick="toggleSection('manage-section')">
+            <h2>🗂️ Gérer les catégories</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div id="manage-section" class="collapsible-content">
+            <label for="manage-category">Voir la catégorie:</label>
+            <select id="manage-category" onchange="afficherElements()"></select>
+            
+            <div id="items-list" class="list-container"></div>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <h3>Nouvelle catégorie</h3>
+            <input type="text" id="new-category-name" placeholder="Nom de la catégorie (ex: Instruments)">
+            
+            <label for="new-category-part">Partie d'appartenance:</label>
+            <select id="new-category-part"></select>
+
+            <button onclick="ajouterCategorie()" style="width: 100%; margin-bottom: 10px;">Ajouter</button>
+            <div class="error-message" id="category-error"></div>
+            <div class="success-message" id="category-success"></div>
+
+            <div style="margin-top: 20px;">
+                <h3>Catégories existantes</h3>
+                <div id="categories-list"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="javascript:void(0);" onclick="showClearListsSelectionModal()" style="color: var(--primary); font-size: 0.8em; text-decoration: none;">⚠️ Vider les listes (Sélection)</a>
+                 | 
+                <a href="javascript:void(0);" onclick="showFullResetModal()" style="color: var(--primary); font-size: 0.8em; text-decoration: none;">♻️ Restaurer les listes d'origine</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirmation</h2>
+            <p id="modal-message"></p>
+            <div class="button-group">
+                <button onclick="confirmAction()">Oui</button>
+                <button class="secondary" onclick="closeModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour la sélection des listes à vider -->
+    <div id="clearListsModal" class="modal">
+        <div class="modal-content">
+            <h2>Sélectionner les listes à vider</h2>
+            <p style="margin-bottom: 15px;">Cochez les catégories dont vous souhaitez supprimer TOUS les éléments. Les catégories vides seront conservées.</p>
+            <div id="clearListsCheckboxes" class="modal-scrollable-content">
+                <!-- Checkboxes injectées ici par JS -->
+            </div>
+            <div class="button-group">
+                <button class="danger" onclick="clearSelectedLists()">Vider les listes sélectionnées</button>
+                <button class="secondary" onclick="closeModal('clearListsModal')">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="historyModal" class="modal history-modal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2>📚 Historique</h2>
+                <button class="secondary" onclick="closeHistoryModal()" style="padding: 5px 10px;">✕</button>
+            </div>
+            <div id="history-list"></div>
+            <div style="margin-top:20px; text-align:center;">
+                <button class="danger" onclick="showClearHistoryModal()">Tout effacer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // --- DONNÉES PAR DÉFAUT (MISES À JOUR AVEC VOTRE FICHIER CSV ET CORRIGÉES) ---
+        const defaultData = {
+            // Catégories du CSV (Ambiance, Structure, Signature, Style, Figure)
+            ambiances: ["Joie", "Mélancolie", "Triste", "Mystère", "Épique", "Quiétude", "Planant", "Fuite", "Peur", "Combat", "Colère", "Sombre"],
+            structures: ["C R", "C R C", "C R C P C R C", "C C R R", "C R P C", "I C P R R C PR R P S PR R O", "I C PR C PR R P/S R"],
+            signatures: ["4/4", "3/4", "6/8", "12/8", "5/4", "9/4", "12/4", "5/2", "7/2"],
+            figures: ["blanche | noire | noire", "noire | blanche | noire", "noire | noire | blanche", "noire | noire | noire | noire", "blanche | 2 croches", "noire | demi-soupir | noire | noire", "noire | noire demi-soupir | noire", "noire | noire | noire demi-soupir", "soupir | noire | noire | noire", "noire | soupir | noire | noire", "noire | noire | soupir | noire", "noire | noire | noire | soupir", "blanche | soupir | noire", "soupir | blanche | noire", "noire | blanche | soupir", "soupir | blanche | soupir", "soupir | noire | noire", "blanche | noire | soupir"],
+            styles: ["Metal", "Rock", "Hardrock", "Chanson à texte", "Jazz", "Classique", "Pop", "Électro", "Ambient", "Folk", "Reggae", "Blues", "Funk", "Hip-hop", "R&B", "Gospel", "Opéra", "Techno"],
+            
+            // Nouvelles catégories du CSV
+            instruments: ["Piano classique", "Guitare classique", "Guitare folk", "Guitare électrique", "Synthétiseur", "Harpe", "Piano électrique", "Guitare basse", "Accordéon", "Orgue", "Trombone", "Tuba", "Bongos", "Cajón", "Congas", "Darbouka", "Djembe"],
+            tonalites: ["Do • C", "Do# / Réb • C#/Db", "Ré • D", "Ré# / Mib • D#/Eb", "Mi • E", "Fa • F", "Fa# / Solb • F#/Gb", "Sol • G", "Sol# / Lab • G#/Ab", "La • A", "La# / Sib • A#/Bb", "Si • B"],
+            majeurmineur: ["Majeur", "mineur"], // CORRECTION: "Mineur" en "mineur"
+            qualites: ["Triade", "Tétrade", "Powercord", "Enrichi", "Altéré", "Suspendu", "Quartal", "Penta", "Cluster", "Augmenté", "Diminué"],
+            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "2•3•2•5", "2•5•3•5"],
+            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Harmonique majeur", "Acoustique espagnol", "Byzantine"],
+            modulations: ["Accord pivot", "Glissement chromatique de notes", "Dominante secondaire • V de V", "Dominante secondaire • IV de IV", "À 11h45 sur cycle des quintes", "À partir du degré I", "Avec accord parallèle vers cadence parfaite", "Par accord diminué", "Changement tonal", "Par l’armure", "Aucune"]
+        };
+
+        const defaultCategories = {
+            ambiances: { label: "Ambiance", icon: "🎭" },
+            styles: { label: "Style musical", icon: "🎸" },
+            structures: { label: "Structure", icon: "🏗️" },
+            tonalites: { label: "Tonalité", icon: "🎹" },
+            modes: { label: "Mode/Gamme", icon: "🎶" },
+            qualites: { label: "Qualité d'accord", icon: "🎼" },
+            suites: { label: "Suite d’accords", icon: "🔄" },
+            // CHANGEMENT: Label et Icon pour Signature
+            signatures: { label: "Signature", icon: "✍🏻" }, 
+            // CHANGEMENT: Label pour Figure
+            figures: { label: "Figure", icon: "♩" }, 
+            // NOUVELLES CATÉGORIES DU CSV
+            instruments: { label: "Instruments maître", icon: "🎺" },
+            majeurmineur: { label: "Majeur ou mineur", icon: "⚖️" },
+            modulations: { label: "Modulation", icon: "➿" }
+        };
+
+        // --- STRUCTURE DE SECTIONS PAR DÉFAUT (Clés internes pour le JS) ---
+        const defaultCategorySections = {
+            style: { 
+                label: "Style", 
+                keys: ['ambiances', 'styles', 'instruments', 'structures'] 
+            },
+            temporal: { 
+                label: "Rythmique", 
+                keys: ['signatures', 'figures'] 
+            },
+            harmony: { 
+                label: "Harmonie", 
+                keys: ['tonalites', 'majeurmineur', 'modes', 'qualites', 'suites', 'modulations'] 
+            }
+        };
+
+        // Mapping pour lier les labels utilisateur aux clés internes de section
+        const partToKeyMap = {
+            'Style': 'style',
+            'Rythmique': 'temporal',
+            'Harmonie': 'harmony'
+        };
+        
+        // Clés qui doivent tirer plusieurs éléments
+        const multipleDrawKeys = ['figures', 'suites', 'modulations'];
+
+        // --- ÉTAT GLOBAL ---
+        let data = {};
+        let categories = {};
+        let categorySectionsState = {}; // L'état des sections qui peut être modifié
+        let currentDraw = { results: {} };
+        let drawHistory = [];
+        let lockedFields = {}; 
+        let modalCallback = null;
+        
+        // NOUVEAU: État des options de tirage (nombre d'éléments)
+        let drawCounts = {
+            figures: 1,
+            suites: 1,
+            modulations: 1
+        };
+
+        // --- INITIALISATION ---
+        window.onload = function() {
+            initData();
+            updateResultDOM();
+            updateCategorySelects();
+            afficherCategories(); 
+            afficherElements();
+            populateCategoryPartSelect(); 
+            
+            // Set initial values for the new number inputs
+            document.getElementById('count-figures').value = drawCounts.figures;
+            document.getElementById('count-suites').value = drawCounts.suites;
+            document.getElementById('count-modulations').value = drawCounts.modulations;
+            
+            if(Object.keys(currentDraw.results).length === 0) {
+                tirer();
+            }
+        };
+
+        function initData() {
+            // Clés de stockage mises à jour pour ne pas mélanger les anciennes données avec la nouvelle structure V4
+            const sData = localStorage.getItem('musicData_v4');
+            const sCats = localStorage.getItem('musicCats_v4');
+            const sHist = localStorage.getItem('musicHist_v4');
+            const sSections = localStorage.getItem('musicSections_v4'); 
+            const sCounts = localStorage.getItem('musicDrawCounts_v4'); // NOUVEAU
+            
+            data = sData ? JSON.parse(sData) : JSON.parse(JSON.stringify(defaultData));
+            categories = sCats ? JSON.parse(sCats) : JSON.parse(JSON.stringify(defaultCategories));
+            drawHistory = sHist ? JSON.parse(sHist) : [];
+            // Utiliser la structure sauvegardée ou celle par défaut
+            categorySectionsState = sSections ? JSON.parse(sSections) : JSON.parse(JSON.stringify(defaultCategorySections));
+            // Chargement des comptes de tirage
+            drawCounts = sCounts ? JSON.parse(sCounts) : drawCounts;
+
+            // S'assurer que les labels par défaut sont à jour et que les nouvelles catégories sont présentes
+            Object.keys(defaultCategories).forEach(key => {
+                // MAJ des propriétés (label, icon) des catégories par défaut
+                if (categories[key]) {
+                    // On ne met à jour que si la valeur n'a pas été modifiée par l'utilisateur
+                    if(defaultCategories[key].label !== categories[key].label) {
+                        // Si le label est différent, on assume que l'utilisateur l'a modifié et on ne touche pas
+                        // Mais on assure que l'icône est là
+                        categories[key].icon = categories[key].icon || defaultCategories[key].icon;
+                    } else {
+                         // Sinon, on s'assure que tout est conforme aux valeurs par défaut
+                         categories[key].label = defaultCategories[key].label;
+                         categories[key].icon = defaultCategories[key].icon;
+                    }
+                } else {
+                    categories[key] = defaultCategories[key];
+                }
+
+                // S'assurer que les données existent pour la nouvelle catégorie
+                if (!data[key]) {
+                    data[key] = defaultData[key] || [];
+                }
+            });
+
+            // S'assurer que les clés de sections correspondent aux nouvelles catégories
+            Object.keys(defaultCategorySections).forEach(sectionKey => {
+                const defaultKeys = defaultCategorySections[sectionKey].keys;
+                const currentKeys = categorySectionsState[sectionKey].keys;
+
+                // Ajouter toutes les clés par défaut qui n'existent pas dans l'état actuel
+                defaultKeys.forEach(key => {
+                    if (!currentKeys.includes(key)) {
+                        currentKeys.push(key);
+                    }
+                });
+                
+                // Nettoyer les clés qui n'existent plus du tout (au cas où l'utilisateur en aurait ajouté/supprimé)
+                categorySectionsState[sectionKey].keys = currentKeys.filter(key => categories[key]);
+            });
+
+
+            saveData();
+            saveCategories();
+            saveSections();
+            saveDrawCounts(); // Sauvegarde des comptes de tirage
+        }
+
+        // --- SAUVEGARDES ---
+        function saveData() { localStorage.setItem('musicData_v4', JSON.stringify(data)); }
+        function saveCategories() { localStorage.setItem('musicCats_v4', JSON.stringify(categories)); }
+        function saveHistory() { localStorage.setItem('musicHist_v4', JSON.stringify(drawHistory)); }
+        function saveSections() { localStorage.setItem('musicSections_v4', JSON.stringify(categorySectionsState)); } 
+        function saveDrawCounts() { localStorage.setItem('musicDrawCounts_v4', JSON.stringify(drawCounts)); }
+
+        // --- LOGIQUE METIER ---
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function getRandomElement(arr) { return arr.length ? arr[Math.floor(Math.random() * arr.length)] : "?"; }
+        
+        function getRandomDuration() {
+            const m = getRandomInt(2, 8);
+            const s = getRandomInt(0, 59);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+        
+        // NOUVEAU: Fonction pour obtenir N éléments uniques aléatoires
+        function getRandomUniqueElements(arr, count) {
+            if (count <= 0 || arr.length === 0) return ["?"];
+            if (count >= arr.length) return arr; // Retourne tout si la demande est >= taille du tableau
+
+            const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+        
+        // NOUVEAU: Mise à jour du compte de tirage
+        function updateDrawCount(key, value) {
+            let num = parseInt(value, 10);
+            if (isNaN(num) || num < 1) num = 1;
+            if (num > 5) num = 5;
+            
+            drawCounts[key] = num;
+            // Aussi mise à jour de l'élément input pour refléter le clipping (1-5)
+            const inputEl = document.getElementById(`count-${key}`);
+            if (inputEl) inputEl.value = num;
+            saveDrawCounts();
+            showToast(`Nombre pour "${categories[key].label}" mis à jour à ${num}.`);
+        }
+
+        // Construit le DOM pour l'affichage des résultats (utilise categorySectionsState)
+        function updateResultDOM() {
+            const container = document.getElementById('result-container');
+            if (!container) return; 
+
+            container.innerHTML = '';
+
+            // Ordre des sections pour l'affichage : Style, Rythmique, Harmonie
+            const sectionOrder = ['style', 'temporal', 'harmony']; 
+
+            // Itération sur les groupes de sections dans l'ordre défini
+            sectionOrder.forEach(sectionKey => {
+                const section = categorySectionsState[sectionKey];
+                if (!section) return; // Sécurité si la section n'existe pas
+
+                const sectionContainer = document.createElement('div');
+                sectionContainer.className = 'result-section-group';
+                
+                // Titre de la section
+                const title = document.createElement('h2');
+                title.className = `section-title`;
+                title.innerHTML = `${section.label}`;
+                sectionContainer.appendChild(title);
+
+                let rowsHtml = '';
+                // Utilise les clés dynamiques de la section
+                const allKeys = [...section.keys];
+                
+                // Ajout des champs statiques (Durée, Tempo) uniquement dans la section Rythmique (temporal)
+                if (sectionKey === 'temporal') {
+                    allKeys.push('tempo');
+                    allKeys.push('duree');
+                }
+
+                // Génération des lignes de résultats pour chaque clé dans la section
+                allKeys.forEach((key, index) => {
+                    const cat = categories[key] || { label: key, icon: '' }; 
+                    const isLocked = lockedFields[key] ? 'locked' : '';
+                    const lockIcon = lockedFields[key] ? '🔒' : '🔓';
+                    
+                    let label = cat.label;
+                    let icon = cat.icon;
+                    
+                    // Gestion des champs statiques et MAJ des libellés
+                    if (key === 'duree') { label = 'Durée'; icon = '⏱️'; }
+                    if (key === 'tempo') { label = 'Tempo'; icon = '⚡'; }
+
+                    rowsHtml += `
+                    <div class="result-row" data-key="${key}" ${index === allKeys.length - 1 ? 'style="border-bottom: none;"' : ''}>
+                        <div class="result-label">${icon} ${label}</div>
+                        <div class="result-value-container">
+                            <span id="res-${key}" class="result-value">-</span>
+                            <button class="lock-btn ${isLocked}" onclick="toggleLock('${key}')" title="Verrouiller ce paramètre">${lockIcon}</button>
+                        </div>
+                    </div>`;
+                });
+                
+                sectionContainer.innerHTML += rowsHtml;
+                container.appendChild(sectionContainer);
+            });
+            
+            // Remet les valeurs si elles existent
+            if(currentDraw.results) {
+                applyValuesToDOM(currentDraw.results);
+            }
+        }
+
+        function toggleLock(key) {
+            lockedFields[key] = !lockedFields[key];
+            updateResultDOM();
+        }
+
+        function tirer() {
+            let delay = 0;
+            const now = new Date();
+            currentDraw.date = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
+            // 1. Catégories dynamiques
+            Object.keys(categories).forEach(key => {
+                if (!lockedFields[key]) {
+                    let val;
+                    
+                    if (multipleDrawKeys.includes(key)) {
+                        // Gère le tirage multiple pour les catégories spécifiées
+                        const count = drawCounts[key] || 1;
+                        const elements = getRandomUniqueElements(data[key] || [], count);
+                        // Stocke sous forme de chaîne jointe pour l'affichage/copie
+                        val = elements.join(' | '); 
+                        
+                    } else {
+                        // Gère le tirage simple (par défaut)
+                        val = getRandomElement(data[key] || []);
+                    }
+                    
+                    currentDraw.results[key] = val;
+                    animateValue(`res-${key}`, val, delay);
+                    delay += 50;
+                }
+            });
+
+            // 2. Champs fixes (Temporel)
+            if (!lockedFields['duree']) {
+                const dur = getRandomDuration();
+                currentDraw.results['duree'] = dur;
+                animateValue('res-duree', dur, delay);
+            }
+            
+            if (!lockedFields['tempo']) {
+                const tempo = getRandomInt(60, 180);
+                currentDraw.results['tempo'] = tempo;
+                animateValue('res-tempo', tempo, delay);
+            }
+        }
+
+        function applyValuesToDOM(results) {
+            Object.keys(results).forEach(key => {
+                const el = document.getElementById(`res-${key}`);
+                if (el) el.innerText = results[key];
+            });
+        }
+
+        function animateValue(id, value, delay) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            
+            setTimeout(() => {
+                el.innerText = value;
+                el.classList.add('spinning');
+                setTimeout(() => el.classList.remove('spinning'), 500);
+            }, delay);
+        }
+
+        // --- GESTION AJOUTS ---
+        function updateCategorySelects() {
+            const selects = ['category', 'manage-category'];
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                if(sel) {
+                    sel.innerHTML = '';
+                    Object.keys(categories).forEach(key => {
+                        const opt = document.createElement('option');
+                        opt.value = key;
+                        opt.text = categories[key].label;
+                        sel.appendChild(opt);
+                    });
+                }
+            });
+        }
+        
+        // Remplir la liste des parties pour la création de catégorie
+        function populateCategoryPartSelect() {
+            const sel = document.getElementById('new-category-part');
+            if(!sel) return;
+            sel.innerHTML = '';
+            
+            Object.keys(partToKeyMap).forEach(label => {
+                const opt = document.createElement('option');
+                opt.value = partToKeyMap[label]; // La valeur est la clé interne (ex: 'style')
+                opt.text = label; // Le texte est le label utilisateur (ex: 'Style')
+                sel.appendChild(opt);
+            });
+        }
+
+        function ajouterElements() {
+            const cat = document.getElementById('category').value;
+            const input = document.getElementById('new-item');
+            const items = input.value.split(',').map(s => s.trim()).filter(s => s);
+            const errorDiv = document.getElementById('add-error');
+            const successDiv = document.getElementById('add-success');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (items.length === 0) {
+                errorDiv.innerText = "Veuillez entrer au moins un élément.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!data[cat]) data[cat] = [];
+            
+            let addedCount = 0;
+            items.forEach(item => {
+                if (!data[cat].includes(item)) {
+                    data[cat].push(item);
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                saveData();
+                input.value = '';
+                successDiv.innerText = `${addedCount} élément(s) ajouté(s) à ${categories[cat].label} !`;
+                successDiv.style.display = 'block';
+                afficherElements(); // Refresh view list if visible
+            } else {
+                errorDiv.innerText = "Ces éléments existent déjà.";
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // --- GESTION CATÉGORIES ---
+        function ajouterCategorie() {
+            const name = document.getElementById('new-category-name').value.trim();
+            const partKey = document.getElementById('new-category-part').value; // Récupère la clé de section (ex: 'style')
+            
+            const errorDiv = document.getElementById('category-error');
+            const successDiv = document.getElementById('category-success');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (!name) {
+                errorDiv.innerText = "Nom de catégorie requis.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Création d'un ID simplifié
+            const id = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (categories[id] || data[id]) {
+                errorDiv.innerText = "Cette catégorie existe déjà (ID conflit).";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Ajout
+            categories[id] = { label: name, icon: '🏷️' };
+            data[id] = [];
+            
+            // Ajout à la section correspondante
+            if (categorySectionsState[partKey]) {
+                categorySectionsState[partKey].keys.push(id);
+            } else {
+                 // Fallback si jamais la clé n'est pas trouvée (ne devrait pas arriver)
+                 categorySectionsState['style'].keys.push(id);
+            }
+
+            saveCategories();
+            saveData();
+            saveSections(); // Sauvegarde de la structure des sections
+
+            updateCategorySelects();
+            document.getElementById('new-category-name').value = '';
+            
+            successDiv.innerText = `Catégorie "${name}" créée dans la partie sélectionnée !`;
+            successDiv.style.display = 'block';
+            
+            // Mise à jour de l'affichage
+            afficherCategories();
+            updateResultDOM(); // Reconstruit l'interface principale
+        }
+
+        // Affiche la liste des catégories avec bouton de suppression
+        function afficherCategories() {
+            const container = document.getElementById('categories-list');
+            if(!container) return;
+            
+            container.innerHTML = '';
+            
+            // On itère sur les sections pour afficher les catégories groupées (optionnel, mais plus clair)
+            // Ou simplement lister tout. Ici, listons tout en indiquant la section.
+            
+            const list = document.createElement('div');
+            list.className = 'list-container';
+            
+            Object.keys(categories).forEach(catId => {
+                // Trouver à quelle section appartient cette catégorie
+                let sectionLabel = "Aucune";
+                Object.values(categorySectionsState).forEach(sec => {
+                    if(sec.keys.includes(catId)) sectionLabel = sec.label;
+                });
+                
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    ${categories[catId].icon} <strong>${categories[catId].label}</strong> <small>(${sectionLabel})</small>
+                    <span class="delete-btn" onclick="confirmerSuppressionCategorie('${catId}')" title="Supprimer">×</span>
+                `;
+                list.appendChild(div);
+            });
+            
+            container.appendChild(list);
+        }
+
+        function confirmerSuppressionCategorie(catId) {
+            // Empêcher la suppression des catégories par défaut 'styles', 'ambiances' etc si on veut être strict, 
+            // mais ici on autorise tout sauf si bug.
+            showModal(`Voulez-vous vraiment supprimer la catégorie "${categories[catId].label}" et toutes ses données ?`, () => {
+                supprimerCategorie(catId);
+            });
+        }
+
+        function supprimerCategorie(catId) {
+            delete categories[catId];
+            delete data[catId];
+            
+            // Retirer de la section
+            Object.keys(categorySectionsState).forEach(secKey => {
+                categorySectionsState[secKey].keys = categorySectionsState[secKey].keys.filter(k => k !== catId);
+            });
+            
+            // Retirer des résultats courants
+            delete currentDraw.results[catId];
+
+            saveCategories();
+            saveData();
+            saveSections();
+            
+            updateCategorySelects();
+            afficherCategories();
+            afficherElements(); // Refresh item list if it was selected
+            updateResultDOM(); // Refresh main UI
+            
+            showToast("Catégorie supprimée");
+            closeModal();
+        }
+
+        // --- GESTION LISTES ---
+        function afficherElements() {
+            const cat = document.getElementById('manage-category').value;
+            const listDiv = document.getElementById('items-list');
+            listDiv.innerHTML = '';
+            
+            if (!data[cat]) return;
+
+            data[cat].forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `${item} <span class="delete-btn" onclick="supprimerElement('${cat}', ${index})">&times;</span>`;
+                listDiv.appendChild(div);
+            });
+        }
+
+        function supprimerElement(cat, index) {
+            data[cat].splice(index, 1);
+            saveData();
+            afficherElements();
+        }
+
+        // --- MODAL Vider les listes (SÉLECTION) ---
+        function showClearListsSelectionModal() {
+            const container = document.getElementById('clearListsCheckboxes');
+            container.innerHTML = '';
+
+            Object.keys(categories).forEach(key => {
+                const count = data[key] ? data[key].length : 0;
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `
+                    <input type="checkbox" value="${key}">
+                    <span>${categories[key].icon} ${categories[key].label} <small>(${count} éléments)</small></span>
+                `;
+                container.appendChild(label);
+            });
+
+            document.getElementById('clearListsModal').style.display = 'block';
+        }
+
+        function clearSelectedLists() {
+            const checkboxes = document.querySelectorAll('#clearListsCheckboxes input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                alert("Veuillez sélectionner au moins une liste.");
+                return;
+            }
+
+            let count = 0;
+            checkboxes.forEach(cb => {
+                const key = cb.value;
+                if (data[key]) {
+                    data[key] = []; // On vide le tableau
+                    count++;
+                }
+            });
+
+            saveData();
+            closeModal('clearListsModal');
+            showToast(`${count} liste(s) vidée(s) avec succès.`);
+            afficherElements(); // Rafraichir si ouvert
+        }
+
+
+        // --- RESET TOTAL ---
+        function showFullResetModal() {
+            showModal("⚠️ Attention ! Cela va écraser TOUTES vos modifications (catégories, items) et remettre les données d'usine. L'historique sera conservé.", () => {
+                fullReset();
+            });
+        }
+
+        function fullReset() {
+            localStorage.removeItem('musicData_v4');
+            localStorage.removeItem('musicCats_v4');
+            localStorage.removeItem('musicSections_v4');
+            localStorage.removeItem('musicDrawCounts_v4'); // Suppression des options de tirage
+            // On recharge la page pour réinitialiser proprement
+            location.reload();
+        }
+
+        // --- HISTORIQUE ---
+        function sauvegarderTirage() {
+            const entry = {
+                date: new Date().toLocaleString(),
+                results: JSON.parse(JSON.stringify(currentDraw.results))
+            };
+            drawHistory.unshift(entry);
+            if (drawHistory.length > 50) drawHistory.pop(); // Limite
+            saveHistory();
+            showToast("Tirage sauvegardé !");
+        }
+
+        function afficherHistorique() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            if (drawHistory.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#666;">Aucun historique.</p>';
+            } else {
+                drawHistory.forEach((entry, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    
+                    let content = `<div class="history-item-header"><span>${entry.date}</span> <button class="secondary" style="font-size:0.8em; padding:2px 8px;" onclick="restaurerTirage(${index})">Recharger</button></div>`;
+                    content += `<div style="display:flex; flex-wrap:wrap; gap:5px;">`;
+                    
+                    Object.keys(entry.results).forEach(key => {
+                        // On essaie de récupérer le label de la catégorie, sinon on met la clé
+                        const catLabel = categories[key] ? categories[key].label : key;
+                        // On ignore duree et tempo pour l'affichage compact, ou on les met
+                        if(key !== 'duree' && key !== 'tempo') {
+                            content += `<span style="background:#ddd; padding:2px 6px; border-radius:4px; font-size:0.85em;"><b>${catLabel}:</b> ${entry.results[key]}</span>`;
+                        }
+                    });
+                    
+                    // Ajout Tempo/Durée à la fin
+                    if(entry.results.tempo) content += `<span style="background:#b2dfdb; padding:2px 6px; border-radius:4px; font-size:0.85em;">⚡ ${entry.results.tempo}</span>`;
+                    
+                    content += `</div>`;
+                    div.innerHTML = content;
+                    list.appendChild(div);
+                });
+            }
+            
+            document.getElementById('historyModal').style.display = 'block';
+        }
+
+        function restaurerTirage(index) {
+            currentDraw.results = JSON.parse(JSON.stringify(drawHistory[index].results));
+            applyValuesToDOM(currentDraw.results);
+            closeHistoryModal();
+            showToast("Tirage rechargé !");
+        }
+        
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
+        function showClearHistoryModal() {
+            if(confirm("Vider tout l'historique ?")) {
+                drawHistory = [];
+                saveHistory();
+                afficherHistorique();
+            }
+        }
+
+        // --- UI UTILS ---
+        function copierResultat() {
+            let text = `🎵 Idée Musicale (${currentDraw.date})\n\n`;
+            
+            // Ordre logique
+            const orderedKeys = ['ambiances', 'styles', 'tempo', 'duree', 'signatures', 'tonalites'];
+            
+            // D'abord les clés principales ordonnées
+            orderedKeys.forEach(key => {
+                if (currentDraw.results[key]) {
+                    const label = categories[key] ? categories[key].label : (key === 'tempo' ? 'Tempo' : (key==='duree'?'Durée':key));
+                    text += `${label}: ${currentDraw.results[key]}\n`;
+                }
+            });
+            
+            // Ensuite le reste
+            Object.keys(currentDraw.results).forEach(key => {
+                if (currentDraw.results[key] && !orderedKeys.includes(key)) {
+                    const label = categories[key] ? categories[key].label : key;
+                    text += `${label}: ${currentDraw.results[key]}\n`;
+                }
+            });
+
+            // Fallback for clipboard access in some environments
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            showToast("Copié dans le presse-papier !");
+        }
+
+        function toggleSection(id) {
+            const content = document.getElementById(id);
+            content.classList.toggle('active');
+            content.previousElementSibling.classList.toggle('active');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        // Generic Modal
+        function showModal(msg, callback) {
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = callback;
+        }
+
+        function confirmAction() {
+            if (modalCallback) modalCallback();
+            closeModal();
+        }
+
+        function closeModal(id = 'confirmModal') {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'confirmModal') modalCallback = null;
+        }
+
+        // Close modal on click outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
+
