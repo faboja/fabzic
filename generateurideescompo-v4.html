@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'Idées Musicales V4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00695c;
+            --primary-dark: #004d40;
+            --secondary: #b2dfdb;
+            --accent: #d32f2f;
+            --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 32px rgba(0, 77, 64, 0.1);
+            
+            /* Couleur unique pour les sections */
+            --section-title-color: var(--primary-dark); 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: var(--primary-dark);
+        }
+
+        .container, .result, .manage-section, .result-section-group {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary);
+            padding: 25px;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        
+        .result {
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* Espace entre les groupes de sections */
+            padding: 25px 25px 5px 25px; /* Ajustement du padding bas */
+        }
+
+        .result-section-group {
+            padding: 0;
+            border: none;
+            background: none;
+            box-shadow: none;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            font-size: 1.8em;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 0;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* STYLE POUR LES TITRES DE SECTION (Couleur unique) */
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            padding: 10px 0;
+            margin-bottom: 15px;
+            border-bottom: 3px solid var(--primary); /* Bordure verte */
+            color: var(--section-title-color); /* Texte vert foncé */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Boutons */
+        button {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 77, 64, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 77, 64, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #fff;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        /* Resultats */
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 105, 92, 0.1);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .result-value-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 2;
+            justify-content: flex-end;
+        }
+
+        .result-value {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #b2dfdb 0%, #80cbc4 100%);
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: right;
+            min-width: 100px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Lock Button */
+        .lock-btn {
+            background: none;
+            box-shadow: none;
+            padding: 5px;
+            color: #ccc;
+            min-width: auto;
+            border: 1px solid transparent;
+        }
+        .lock-btn:hover {
+            background: none;
+            transform: scale(1.1);
+            color: var(--primary);
+            box-shadow: none;
+        }
+        .lock-btn.locked {
+            color: var(--accent);
+        }
+
+        .spinning {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotateX(0deg); opacity: 0.5; }
+            50% { transform: rotateX(90deg); opacity: 0.3; }
+            100% { transform: rotateX(0deg); opacity: 1; }
+        }
+
+        /* Inputs & Forms */
+        select, input[type="text"] {
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary);
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Specific margin for part select */
+        label[for="new-category-part"] {
+            display: block; 
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* List Items (Tags) */
+        .list-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .list-item {
+            padding: 6px 12px;
+            border: 1px solid var(--secondary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #e0f2f1;
+            font-size: 0.9em;
+        }
+
+        .list-item span.delete-btn {
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .list-item span.delete-btn:hover {
+            color: #b71c1c;
+        }
+
+        /* Accordion / Collapsible */
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            user-select: none;
+        }
+        .collapsible-header:hover {
+            opacity: 0.8;
+        }
+        .collapsible-content {
+            display: none;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            animation: slideDown 0.3s ease-out;
+        }
+        .collapsible-content.active {
+            display: block;
+        }
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+        .active .arrow {
+            transform: rotate(180deg);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Messages */
+        .error-message { color: var(--accent); display: none; margin-top: 5px; font-size: 0.9em;}
+        .success-message { color: #2e7d32; display: none; margin-top: 5px; font-size: 0.9em;}
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10vh auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-scrollable-content {
+            max-height: 40vh;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .history-modal .modal-content { max-width: 700px; max-height: 80vh; overflow-y: auto; }
+        
+        .history-item {
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Checkbox styles for clear lists modal */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .checkbox-label:hover {
+            background-color: #eee;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+            min-width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 2000;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .result-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .result-value-container { width: 100%; justify-content: space-between; }
+            .button-group { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Générateur d'Idées Musicales</h1>
+        <div class="button-group">
+            <button onclick="tirer()">🎲 Lancer le dé</button>
+            <button class="secondary" onclick="copierResultat()">📋 Copier</button>
+            <button class="secondary" onclick="sauvegarderTirage()">💾 Sauver</button>
+            <button class="secondary" onclick="afficherHistorique()">📚 Historique</button>
+        </div>
+    </div>
+
+    <!-- Zone de résultat dynamique -->
+    <div class="result" id="result-container">
+        <!-- Le contenu sera généré par JS, structuré en sections -->
+    </div>
+
+    <!-- Section Ajout (Pliable) -->
+    <div class="manage-section">
+        <div class="collapsible-header" onclick="toggleSection('add-section')">
+            <h2>➕ Ajouter des éléments</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div id="add-section" class="collapsible-content">
+            <label for="category">Catégorie:</label>
+            <select id="category"></select>
+            
+            <label for="new-item">Nouveaux éléments (séparés par virgules):</label>
+            <input type="text" id="new-item" placeholder="Ex: Romantique, Énergique, Jazz Fusion">
+            
+            <div class="button-group">
+                <button onclick="ajouterElements()">Ajouter</button>
+            </div>
+            <div class="error-message" id="add-error"></div>
+            <div class="success-message" id="add-success"></div>
+        </div>
+    </div>
+
+    <!-- Section Gestion (Pliable) -->
+    <div class="manage-section">
+        <div class="collapsible-header" onclick="toggleSection('manage-section')">
+            <!-- MODIFICATION: "Gérer / Supprimer" devient "Gérer les catégories" -->
+            <h2>🗂️ Gérer les catégories</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div id="manage-section" class="collapsible-content">
+            <label for="manage-category">Voir la catégorie:</label>
+            <select id="manage-category" onchange="afficherElements()"></select>
+            
+            <div id="items-list" class="list-container"></div>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <h3>Nouvelle catégorie</h3>
+            <input type="text" id="new-category-name" placeholder="Nom de la catégorie (ex: Instruments)">
+            
+            <!-- MODIFICATION: Correction de la capitalisation -->
+            <label for="new-category-part">Partie d'appartenance:</label>
+            <select id="new-category-part"></select>
+
+            <button onclick="ajouterCategorie()" style="width: 100%; margin-bottom: 10px;">Ajouter</button>
+            <div class="error-message" id="category-error"></div>
+            <div class="success-message" id="category-success"></div>
+
+            <div style="margin-top: 20px;">
+                <h3>Catégories existantes</h3>
+                <!-- DIV MANQUANT AJOUTÉ ICI -->
+                <div id="categories-list"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <!-- MODIFICATION: Les liens utilisent la couleur verte (--primary) -->
+                <a href="javascript:void(0);" onclick="showClearListsSelectionModal()" style="color: var(--primary); font-size: 0.8em; text-decoration: none;">⚠️ Vider les listes (Sélection)</a>
+                 | 
+                <a href="javascript:void(0);" onclick="showFullResetModal()" style="color: var(--primary); font-size: 0.8em; text-decoration: none;">♻️ Restaurer les listes d'origine</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirmation</h2>
+            <p id="modal-message"></p>
+            <div class="button-group">
+                <button onclick="confirmAction()">Oui</button>
+                <button class="secondary" onclick="closeModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour la sélection des listes à vider -->
+    <div id="clearListsModal" class="modal">
+        <div class="modal-content">
+            <h2>Sélectionner les listes à vider</h2>
+            <p style="margin-bottom: 15px;">Cochez les catégories dont vous souhaitez supprimer TOUS les éléments. Les catégories vides seront conservées.</p>
+            <div id="clearListsCheckboxes" class="modal-scrollable-content">
+                <!-- Checkboxes injectées ici par JS -->
+            </div>
+            <div class="button-group">
+                <button class="danger" onclick="clearSelectedLists()">Vider les listes sélectionnées</button>
+                <button class="secondary" onclick="closeModal('clearListsModal')">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="historyModal" class="modal history-modal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2>📚 Historique</h2>
+                <button class="secondary" onclick="closeHistoryModal()" style="padding: 5px 10px;">✕</button>
+            </div>
+            <div id="history-list"></div>
+            <div style="margin-top:20px; text-align:center;">
+                <button class="danger" onclick="showClearHistoryModal()">Tout effacer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // --- DONNÉES PAR DÉFAUT (MISES À JOUR AVEC VOTRE FICHIER CSV) ---
+        const defaultData = {
+            // Catégories du CSV (Ambiance, Structure, Signature, Style, Figure)
+            ambiances: ["Joyeuse", "Mélancolique", "Triste", "Mystérieuse", "Épique", "Douce", "Intense", "Relaxante", "Agressive", "Cinématique", "Aventureuse", "Sombre"],
+            structures: ["C R", "C R C", "C R C P C R C", "C C R R", "C R P C", "I C P R R C PR R P S PR R O", "I C PR C PR R P/S R", "I P C R P C R O", "I C P R R O"],
+            signatures: ["4/4", "3/4", "6/8", "12/8", "5/4", "9/4", "12/4", "5/2", "7/2", "1/2", "2/4", "3/8", "7/8", "13/8", "15/8", "7/4", "13/4", "15/4"],
+            figures: ["blanche | noire | noire", "noire | blanche | noire", "noire | noire | blanche", "noire | noire | noire | noire", "blanche | 2 croches", "noire | demi-soupir | noire | noire", "noire | noire demi-soupir | noire", "noire | noire | noire demi-soupir", "soupir | noire | noire | noire", "noire | soupir | noire | noire", "noire | noire | soupir | noire", "noire | noire | noire | soupir", "blanche | soupir | noire", "soupir | blanche | noire", "noire | blanche | soupir", "soupir | blanche | soupir", "soupir | noire | noire", "blanche | noire | soupir"],
+            styles: ["Metal", "Rock", "Hardrock", "Chanson à texte", "Jazz", "Classique", "Pop", "Électro", "Ambient", "Folk", "Reggae", "Blues", "Funk", "Hip-hop", "R&B", "Gospel", "Opéra", "Techno"],
+            
+            // Nouvelles catégories du CSV (Instruments maître, Tonalités, Majeur ou Mineur, Qualité, Suite, Gamme, Modulation)
+            instruments: ["Piano classique", "Guitare classique", "Guitare folk", "Guitare électrique", "Synthétiseur", "Harpe", "Piano électrique", "Guitare basse", "Accordéon", "Orgue", "Trombone", "Tuba", "Bongos", "Cajón", "Congas", "Darbouka", "Djembe", "Flûte à bec", "Flûte traversière", "Saxophone", "Batterie acoustique", "Batterie électronique", "Gong", "Clavecin", "Violon", "Violoncelle", "Alto", "Contrebasse", "Cuivres ensemble", "Choeur", "Voix seule", "Marimba", "Glockenspiel", "Xylophone", "Vibraphone", "Kazoo"],
+            tonalites: ["Do • C", "Do# / Réb • C#/Db", "Ré • D", "Ré# / Mib • D#/Eb", "Mi • E", "Fa • F", "Fa# / Solb • F#/Gb", "Sol • G", "Sol# / Lab • G#/Ab", "La • A", "La# / Sib • A#/Bb", "Si • B"],
+            majeurmineur: ["Majeur", "Mineur", "Ambigüe"],
+            qualites: ["Triade", "Tétrade", "Powercord", "Enrichi", "Altéré", "Suspendu", "Quartal", "Penta", "Cluster", "Augmenté", "Diminué"],
+            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "2•3•2•5", "2•5•3•5", "1•4•5", "3•6•2•5", "2•5•1•6", "1•5•4•6", "6•4•1•5", "1•4•6•5", "1•3•4•5"],
+            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Harmonique majeur", "Acoustique espagnol", "Byzantine", "Majeur", "Mineur", "Mélodique mineur", "Pentatonique", "Blues", "Chromatique", "Altérée", "Espagnole", "Hongroise", "Égyptienne", "Tzigane"],
+            modulations: ["Accord pivot", "Glissement chromatique de notes", "Dominante secondaire • V de V", "Dominante secondaire • IV de IV", "À 11h45 sur cycle des quintes", "À partir du degré I", "Avec accord parallèle vers cadence parfaite", "Par accord diminué", "Changement tonal", "Par l’armure", "Aucune"]
+        };
+
+        const defaultCategories = {
+            ambiances: { label: "Ambiance", icon: "🎭" },
+            styles: { label: "Style musical", icon: "🎸" },
+            structures: { label: "Structure", icon: "🏗️" },
+            tonalites: { label: "Tonalité", icon: "🎹" },
+            modes: { label: "Mode/Gamme", icon: "🎶" },
+            qualites: { label: "Qualité d'accord", icon: "🎼" }, // Label ajusté
+            suites: { label: "Suite d’accords", icon: "🔄" }, // Label ajusté
+            signatures: { label: "Signature rythmique", icon: "4/4" }, // Label ajusté
+            figures: { label: "Figure rythmique", icon: "♩" }, // Label ajusté
+            // NOUVELLES CATÉGORIES DU CSV
+            instruments: { label: "Instruments maître", icon: "🎺" },
+            majeurmineur: { label: "Majeur ou Mineur", icon: "⚖️" },
+            modulations: { label: "Modulation", icon: "➿" }
+        };
+
+        // --- STRUCTURE DE SECTIONS PAR DÉFAUT (Clés internes pour le JS) ---
+        const defaultCategorySections = {
+            style: { 
+                label: "Style", 
+                // AJOUT de 'instruments' dans la section Style
+                keys: ['ambiances', 'styles', 'instruments', 'structures'] 
+            },
+            temporal: { 
+                label: "Rythmique", 
+                keys: ['signatures', 'figures'] 
+            },
+            harmony: { 
+                label: "Harmonie", 
+                // AJOUT de 'majeurmineur' et 'modulations' dans la section Harmonie
+                keys: ['tonalites', 'majeurmineur', 'modes', 'qualites', 'suites', 'modulations'] 
+            }
+        };
+
+        // Mapping pour lier les labels utilisateur aux clés internes de section
+        const partToKeyMap = {
+            'Style': 'style',
+            'Rythmique': 'temporal',
+            'Harmonie': 'harmony'
+        };
+
+        // --- ÉTAT GLOBAL ---
+        let data = {};
+        let categories = {};
+        let categorySectionsState = {}; // L'état des sections qui peut être modifié
+        let currentDraw = { results: {} };
+        let drawHistory = [];
+        let lockedFields = {}; 
+        let modalCallback = null;
+
+        // --- INITIALISATION ---
+        window.onload = function() {
+            initData();
+            updateResultDOM();
+            updateCategorySelects();
+            afficherCategories(); // Maintenant que le div categories-list existe, cette ligne ne causera plus d'erreur.
+            afficherElements();
+            populateCategoryPartSelect(); 
+            
+            if(Object.keys(currentDraw.results).length === 0) {
+                tirer();
+            }
+        };
+
+        function initData() {
+            // Clés de stockage mises à jour pour ne pas mélanger les anciennes données avec la nouvelle structure V4
+            const sData = localStorage.getItem('musicData_v4');
+            const sCats = localStorage.getItem('musicCats_v4');
+            const sHist = localStorage.getItem('musicHist_v4');
+            const sSections = localStorage.getItem('musicSections_v4'); 
+            
+            data = sData ? JSON.parse(sData) : JSON.parse(JSON.stringify(defaultData));
+            categories = sCats ? JSON.parse(sCats) : JSON.parse(JSON.stringify(defaultCategories));
+            drawHistory = sHist ? JSON.parse(sHist) : [];
+            // Utiliser la structure sauvegardée ou celle par défaut
+            categorySectionsState = sSections ? JSON.parse(sSections) : JSON.parse(JSON.stringify(defaultCategorySections));
+
+            // S'assurer que les labels par défaut sont à jour et que les nouvelles catégories sont présentes
+            Object.keys(defaultCategories).forEach(key => {
+                // MAJ des propriétés (label, icon) des catégories par défaut
+                if (categories[key]) {
+                    // On ne met à jour que si la valeur n'a pas été modifiée par l'utilisateur
+                    if(defaultCategories[key].label !== categories[key].label) {
+                        // Si le label est différent, on assume que l'utilisateur l'a modifié et on ne touche pas
+                        // Mais on assure que l'icône est là
+                        categories[key].icon = categories[key].icon || defaultCategories[key].icon;
+                    } else {
+                         // Sinon, on s'assure que tout est conforme aux valeurs par défaut
+                         categories[key].label = defaultCategories[key].label;
+                         categories[key].icon = defaultCategories[key].icon;
+                    }
+                } else {
+                    categories[key] = defaultCategories[key];
+                }
+
+                // S'assurer que les données existent pour la nouvelle catégorie
+                if (!data[key]) {
+                    data[key] = defaultData[key] || [];
+                }
+            });
+
+            // S'assurer que les clés de sections correspondent aux nouvelles catégories
+            Object.keys(defaultCategorySections).forEach(sectionKey => {
+                const defaultKeys = defaultCategorySections[sectionKey].keys;
+                const currentKeys = categorySectionsState[sectionKey].keys;
+
+                // Ajouter toutes les clés par défaut qui n'existent pas dans l'état actuel
+                defaultKeys.forEach(key => {
+                    if (!currentKeys.includes(key)) {
+                        currentKeys.push(key);
+                    }
+                });
+                
+                // Nettoyer les clés qui n'existent plus du tout (au cas où l'utilisateur en aurait ajouté/supprimé)
+                categorySectionsState[sectionKey].keys = currentKeys.filter(key => categories[key]);
+            });
+
+
+            saveData();
+            saveCategories();
+            saveSections();
+        }
+
+        // --- SAUVEGARDES ---
+        function saveData() { localStorage.setItem('musicData_v4', JSON.stringify(data)); }
+        function saveCategories() { localStorage.setItem('musicCats_v4', JSON.stringify(categories)); }
+        function saveHistory() { localStorage.setItem('musicHist_v4', JSON.stringify(drawHistory)); }
+        function saveSections() { localStorage.setItem('musicSections_v4', JSON.stringify(categorySectionsState)); } 
+
+        // --- LOGIQUE METIER ---
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function getRandomElement(arr) { return arr.length ? arr[Math.floor(Math.random() * arr.length)] : "?"; }
+        
+        function getRandomDuration() {
+            const m = getRandomInt(2, 8);
+            const s = getRandomInt(0, 59);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // Construit le DOM pour l'affichage des résultats (utilise categorySectionsState)
+        function updateResultDOM() {
+            const container = document.getElementById('result-container');
+            if (!container) return; 
+
+            container.innerHTML = '';
+
+            // Ordre des sections pour l'affichage : Style, Rythmique, Harmonie
+            const sectionOrder = ['style', 'temporal', 'harmony']; 
+
+            // Itération sur les groupes de sections dans l'ordre défini
+            sectionOrder.forEach(sectionKey => {
+                const section = categorySectionsState[sectionKey];
+                if (!section) return; // Sécurité si la section n'existe pas
+
+                const sectionContainer = document.createElement('div');
+                sectionContainer.className = 'result-section-group';
+                
+                // Titre de la section
+                const title = document.createElement('h2');
+                title.className = `section-title`;
+                title.innerHTML = `${section.label}`;
+                sectionContainer.appendChild(title);
+
+                let rowsHtml = '';
+                // Utilise les clés dynamiques de la section
+                const allKeys = [...section.keys];
+                
+                // Ajout des champs statiques (Durée, Tempo) uniquement dans la section Rythmique (temporal)
+                if (sectionKey === 'temporal') {
+                    allKeys.push('tempo');
+                    allKeys.push('duree');
+                }
+
+                // Génération des lignes de résultats pour chaque clé dans la section
+                allKeys.forEach((key, index) => {
+                    const cat = categories[key] || { label: key, icon: '' }; 
+                    const isLocked = lockedFields[key] ? 'locked' : '';
+                    const lockIcon = lockedFields[key] ? '🔒' : '🔓';
+                    
+                    let label = cat.label;
+                    let icon = cat.icon;
+                    
+                    // Gestion des champs statiques et MAJ des libellés
+                    if (key === 'duree') { label = 'Durée'; icon = '⏱️'; }
+                    if (key === 'tempo') { label = 'Tempo'; icon = '⚡'; }
+
+                    rowsHtml += `
+                    <div class="result-row" data-key="${key}" ${index === allKeys.length - 1 ? 'style="border-bottom: none;"' : ''}>
+                        <div class="result-label">${icon} ${label}</div>
+                        <div class="result-value-container">
+                            <span id="res-${key}" class="result-value">-</span>
+                            <button class="lock-btn ${isLocked}" onclick="toggleLock('${key}')" title="Verrouiller ce paramètre">${lockIcon}</button>
+                        </div>
+                    </div>`;
+                });
+                
+                sectionContainer.innerHTML += rowsHtml;
+                container.appendChild(sectionContainer);
+            });
+            
+            // Remet les valeurs si elles existent
+            if(currentDraw.results) {
+                applyValuesToDOM(currentDraw.results);
+            }
+        }
+
+        function toggleLock(key) {
+            lockedFields[key] = !lockedFields[key];
+            updateResultDOM();
+        }
+
+        function tirer() {
+            let delay = 0;
+            const now = new Date();
+            currentDraw.date = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
+            // 1. Catégories dynamiques
+            Object.keys(categories).forEach(key => {
+                if (!lockedFields[key]) {
+                    const val = getRandomElement(data[key] || []);
+                    currentDraw.results[key] = val;
+                    animateValue(`res-${key}`, val, delay);
+                    delay += 50;
+                }
+            });
+
+            // 2. Champs fixes (Temporel)
+            if (!lockedFields['duree']) {
+                const dur = getRandomDuration();
+                currentDraw.results['duree'] = dur;
+                animateValue('res-duree', dur, delay);
+            }
+            
+            if (!lockedFields['tempo']) {
+                const tempo = getRandomInt(60, 180);
+                currentDraw.results['tempo'] = tempo;
+                animateValue('res-tempo', tempo, delay);
+            }
+        }
+
+        function applyValuesToDOM(results) {
+            Object.keys(results).forEach(key => {
+                const el = document.getElementById(`res-${key}`);
+                if(el) el.innerText = results[key];
+            });
+        }
+
+        function animateValue(id, value, delay) {
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.add('spinning');
+                    el.innerText = value;
+                    setTimeout(() => el.classList.remove('spinning'), 500);
+                }
+            }, delay);
+        }
+
+        // --- GESTION DES LISTES & CATEGORIES ---
+
+        function toggleSection(id) {
+            const el = document.getElementById(id);
+            const isActive = el.classList.contains('active');
+            
+            // Ferme tout
+            document.querySelectorAll('.collapsible-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+
+            // Ouvre si c'était fermé
+            if(!isActive) {
+                el.classList.add('active');
+                // Trouve la flèche correspondante
+                el.previousElementSibling.querySelector('.arrow').style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Remplir le select de la partie d'appartenance
+        function populateCategoryPartSelect() {
+            const select = document.getElementById('new-category-part');
+            if (!select) return;
+
+            select.innerHTML = '';
+            
+            // Utiliser les labels des sections
+            Object.keys(categorySectionsState).forEach(key => {
+                const label = categorySectionsState[key].label;
+                const opt = new Option(label, label); // Label utilisateur = Style, Rythmique, Harmonie
+                select.add(opt);
+            });
+        }
+
+        function updateCategorySelects() {
+            const addSel = document.getElementById('category');
+            const manageSel = document.getElementById('manage-category');
+            if (!addSel || !manageSel) return; 
+            
+            addSel.innerHTML = '';
+            manageSel.innerHTML = '';
+
+            // Assure l'utilisation des labels mis à jour
+            Object.keys(categories).forEach(key => {
+                const opt = new Option(categories[key].label, key);
+                addSel.add(opt.cloneNode(true));
+                manageSel.add(opt);
+            });
+        }
+
+        function afficherCategories() {
+            const list = document.getElementById('categories-list');
+            if (!list) {
+                console.error("L'élément 'categories-list' est manquant dans le DOM.");
+                return;
+            }
+            list.innerHTML = '';
+
+            // On itère sur la structure des sections pour afficher les catégories groupées
+            Object.keys(categorySectionsState).forEach(sectionKey => {
+                const section = categorySectionsState[sectionKey];
+                
+                const sectionTitle = document.createElement('h4');
+                sectionTitle.style.cssText = 'margin-top: 15px; margin-bottom: 5px; font-weight: bold; color: var(--primary); border-bottom: 1px dashed var(--secondary); padding-bottom: 5px;';
+                sectionTitle.innerText = section.label;
+                list.appendChild(sectionTitle);
+
+                const container = document.createElement('div');
+                container.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;';
+                
+                let count = 0;
+                section.keys.forEach(key => {
+                    const cat = categories[key];
+                    // Vérifier si la catégorie existe dans l'objet categories (il peut y avoir des clés orphelines)
+                    if (cat) {
+                        const div = document.createElement('div');
+                        div.className = 'list-item';
+                        div.innerHTML = `${cat.icon} ${cat.label} <span class="delete-btn" onclick="askDeleteCategory('${key}')">&times;</span>`;
+                        container.appendChild(div);
+                        count++;
+                    }
+                });
+
+                if (count === 0) {
+                    const p = document.createElement('p');
+                    p.style.cssText = 'font-size: 0.9em; color: #999; margin-left: 5px;';
+                    p.innerText = "Aucune catégorie attribuée ici.";
+                    container.appendChild(p);
+                }
+
+                list.appendChild(container);
+            });
+        }
+
+        function afficherElements() {
+            const catSelect = document.getElementById('manage-category');
+            const list = document.getElementById('items-list');
+
+            if(!catSelect || !list) return;
+
+            const catKey = catSelect.value;
+            if(!catKey) {
+                list.innerHTML = '<em>Sélectionnez une catégorie pour voir ses éléments.</em>';
+                return;
+            }
+
+            const items = data[catKey] || [];
+            list.innerHTML = '';
+
+            if(items.length === 0) list.innerHTML = '<em>Aucun élément.</em>';
+
+            items.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `${item} <span class="delete-btn" onclick="askDeleteItem('${catKey}', ${idx})">&times;</span>`;
+                list.appendChild(div);
+            });
+        }
+
+        function ajouterElements() {
+            const cat = document.getElementById('category').value;
+            const input = document.getElementById('new-item');
+            const raw = input.value.trim();
+
+            if(!raw) return showError('add-error', "Le champ est vide.");
+
+            const itemsToAdd = raw.split(',').map(s => s.trim()).filter(s => s);
+            let count = 0;
+
+            if(!data[cat]) data[cat] = [];
+
+            itemsToAdd.forEach(item => {
+                // Vérification simple d'existence pour éviter les doublons
+                if(!data[cat].map(s => s.toLowerCase()).includes(item.toLowerCase())) {
+                    data[cat].push(item);
+                    count++;
+                }
+            });
+
+            if(count > 0) {
+                saveData();
+                input.value = '';
+                showSuccess('add-success', `${count} élément(s) ajouté(s).`);
+                if(document.getElementById('manage-category').value === cat) afficherElements();
+            } else {
+                showError('add-error', "Ces éléments existent déjà ou sont invalides.");
+            }
+        }
+
+        function ajouterCategorie() {
+            const nameInput = document.getElementById('new-category-name');
+            const partSelect = document.getElementById('new-category-part');
+
+            const name = nameInput.value.trim();
+            const partLabel = partSelect.value;
+            const sectionKey = partToKeyMap[partLabel]; // Clé interne (style, temporal, harmony)
+
+            if(!name) return showError('category-error', "Nom invalide.");
+            if(!sectionKey) return showError('category-error', "Partie d'appartenance invalide.");
+
+            // Créer un ID unique et simple (minuscules, sans caractères spéciaux)
+            const id = name.toLowerCase().replace(/[^a-z0-9]/g, ''); 
+            if(categories[id]) return showError('category-error', "Cette catégorie existe déjà (ID généré: "+id+")");
+
+            // 1. Ajouter à la liste des catégories
+            categories[id] = { label: name, icon: '🏷️' };
+            
+            // 2. Initialiser la liste des éléments
+            data[id] = [];
+            
+            // 3. Ajouter la clé à la section choisie dans l'état dynamique
+            if (categorySectionsState[sectionKey] && !categorySectionsState[sectionKey].keys.includes(id)) {
+                categorySectionsState[sectionKey].keys.push(id);
+                saveSections();
+            } else {
+                console.error("Erreur: Impossible d'ajouter la catégorie à la section. SectionKey:", sectionKey);
+            }
+            
+            // 4. Sauvegarder les changements
+            saveCategories();
+            saveData();
+            
+            // 5. Mettre à jour l'interface
+            updateCategorySelects();
+            afficherCategories();
+            updateResultDOM();
+            
+            // 6. Afficher succès
+            nameInput.value = '';
+            // Ne pas réinitialiser partSelect pour permettre l'ajout rapide dans la même section
+            showSuccess('category-success', `Catégorie "${name}" créée et ajoutée à la partie "${partLabel}" !`);
+        }
+
+        // --- SUPPRESSION ---
+        function askDeleteCategory(key) {
+            modalCallback = () => {
+                // 1. Retirer la clé de toutes les sections
+                Object.keys(categorySectionsState).forEach(secKey => {
+                    categorySectionsState[secKey].keys = categorySectionsState[secKey].keys.filter(k => k !== key);
+                });
+                saveSections(); // Sauvegarder la structure des sections mise à jour
+
+                // 2. Supprimer les données et la catégorie
+                delete categories[key];
+                delete data[key];
+                delete lockedFields[key];
+                
+                saveCategories();
+                saveData();
+                
+                // 3. Mettre à jour l'interface
+                updateCategorySelects();
+                afficherCategories();
+                updateResultDOM();
+                afficherElements();
+                showToast(`Catégorie "${key}" supprimée.`);
+            };
+            const catLabel = categories[key] ? categories[key].label : key;
+            openModal(`Supprimer la catégorie "${catLabel}" ? Attention, cela va aussi retirer cette catégorie de l'affichage principal.`, 'confirmModal');
+        }
+
+        function askDeleteItem(cat, idx) {
+            const item = data[cat][idx];
+            modalCallback = () => {
+                data[cat].splice(idx, 1);
+                saveData();
+                afficherElements();
+                showToast(`Élément "${item}" supprimé.`);
+            };
+            openModal(`Supprimer "${item}" ?`, 'confirmModal');
+        }
+        
+        function showFullResetModal() {
+            modalCallback = () => {
+                // Utilisation des nouvelles clés de stockage
+                localStorage.removeItem('musicData_v4');
+                localStorage.removeItem('musicCats_v4');
+                localStorage.removeItem('musicHist_v4'); 
+                localStorage.removeItem('musicSections_v4'); 
+                location.reload();
+            };
+            openModal("Reset Total (retour aux listes d'origine) ? Irréversible.", 'confirmModal');
+        }
+
+        // --- HISTORIQUE & OUTILS ---
+
+        function sauvegarderTirage() {
+            if(!currentDraw.results || Object.keys(currentDraw.results).length === 0) return;
+            
+            const entry = JSON.parse(JSON.stringify(currentDraw));
+            drawHistory.unshift(entry);
+            
+            if(drawHistory.length > 30) drawHistory.pop();
+            saveHistory();
+            showToast("Tirage sauvegardé !");
+        }
+
+        function afficherHistorique() {
+            const container = document.getElementById('history-list');
+            if(!container) return;
+
+            container.innerHTML = '';
+            
+            if(drawHistory.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999;">Aucun historique.</p>';
+            } else {
+                drawHistory.forEach((draw, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    
+                    let summary = '';
+                    // Utilise les 3 premières clés trouvées pour le résumé
+                    const keys = Object.keys(draw.results).slice(0, 3);
+                    keys.forEach(k => {
+                        const label = categories[k] ? categories[k].label : k.charAt(0).toUpperCase() + k.slice(1);
+                        summary += `${label}: ${draw.results[k]} / `;
+                    });
+                    
+                    div.innerHTML = `
+                        <div class="history-item-header">
+                            <span>📅 ${draw.date}</span>
+                            <div style="display:flex; gap:5px;">
+                                <button class="secondary" style="padding:2px 8px; font-size:0.8em;" onclick="chargerTirage(${index})">Recharger</button>
+                                <button class="secondary" style="padding:2px 8px; font-size:0.8em;" onclick="supprimerHistoriqueItem(${index})">🗑️</button>
+                            </div>
+                        </div>
+                        <div style="font-size:0.9em; font-style:italic;">${summary.slice(0, -3) || 'Résultat vide'}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            document.getElementById('historyModal').style.display = 'block';
+        }
+
+        function chargerTirage(index) {
+            const draw = drawHistory[index];
+            currentDraw = JSON.parse(JSON.stringify(draw));
+            
+            lockedFields = {}; 
+            
+            updateResultDOM();
+            applyValuesToDOM(currentDraw.results);
+            
+            closeHistoryModal();
+            showToast("Tirage rechargé !");
+        }
+        
+        function supprimerHistoriqueItem(index) {
+            drawHistory.splice(index, 1);
+            saveHistory();
+            afficherHistorique();
+        }
+
+        function showClearHistoryModal() {
+            modalCallback = () => {
+                drawHistory = [];
+                saveHistory();
+                afficherHistorique();
+                showToast("Historique vidé.");
+                closeModal('confirmModal'); // S'assurer que le modal de confirmation est fermé
+                closeHistoryModal();
+            };
+            openModal("Vraiment tout effacer l'historique ?", 'confirmModal');
+        }
+
+        function copierResultat() {
+            let fullText = "";
+            
+            // Ordre des sections pour la copie : Style, Rythmique, Harmonie
+            const sectionOrder = ['style', 'temporal', 'harmony']; 
+
+            sectionOrder.forEach(sectionKey => {
+                const section = categorySectionsState[sectionKey];
+                
+                fullText += `--- ${section.label.toUpperCase()} ---\n`;
+                const allKeys = [...section.keys];
+                
+                if (sectionKey === 'temporal') {
+                    allKeys.push('tempo');
+                    allKeys.push('duree');
+                }
+                
+                allKeys.forEach(key => {
+                    if (currentDraw.results[key]) {
+                        let label = categories[key] ? categories[key].label : key.charAt(0).toUpperCase() + key.slice(1);
+                        // MAJ des libellés dans le texte copié
+                        if(key === 'duree') label = "Durée";
+                        if(key === 'tempo') label = "Tempo";
+                        
+                        fullText += `${label}: ${currentDraw.results[key]}\n`;
+                    }
+                });
+                fullText += "\n";
+            });
+            
+            fullText += `\n📅 ${currentDraw.date}`;
+
+            if (Object.keys(currentDraw.results).length > 0) {
+                 navigator.clipboard.writeText(fullText).then(() => showToast("Copié dans le presse-papier !"))
+                    .catch(err => console.error('Erreur de copie:', err));
+            } else {
+                 showToast("Aucun résultat à copier.");
+            }
+        }
+        
+        // --- UTILITAIRES ---
+        
+        function showClearListsSelectionModal() {
+            const checkboxesContainer = document.getElementById('clearListsCheckboxes');
+            if(!checkboxesContainer) return;
+            
+            checkboxesContainer.innerHTML = '';
+
+            const categoryKeys = Object.keys(categories);
+            if(categoryKeys.length === 0) {
+                showToast("Aucune catégorie à vider.");
+                return;
+            }
+
+            categoryKeys.forEach(key => {
+                const cat = categories[key];
+                const count = data[key] ? data[key].length : 0;
+                
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `
+                    <input type="checkbox" name="listToClear" value="${key}">
+                    <span>${cat.icon} ${cat.label} (${count} éléments)</span>
+                `;
+                checkboxesContainer.appendChild(label);
+            });
+            
+            document.getElementById('clearListsModal').style.display = 'block';
+        }
+
+        function clearSelectedLists() {
+            const checkboxes = document.querySelectorAll('#clearListsCheckboxes input[name="listToClear"]:checked');
+            const listsToClear = Array.from(checkboxes).map(cb => cb.value);
+
+            if (listsToClear.length === 0) {
+                showToast("Veuillez sélectionner au moins une liste.");
+                return;
+            }
+
+            let clearedCount = 0;
+            listsToClear.forEach(key => {
+                if (data[key]) {
+                    data[key] = [];
+                    clearedCount++;
+                }
+            });
+
+            if (clearedCount > 0) {
+                saveData();
+                afficherElements();
+                updateResultDOM();
+                showToast(`${clearedCount} liste(s) vidée(s) avec succès.`);
+            }
+
+            closeModal('clearListsModal');
+        }
+
+        window.showClearListsSelectionModal = showClearListsSelectionModal;
+        window.clearSelectedLists = clearSelectedLists; 
+
+        function openModal(msg, id = 'confirmModal') {
+            const modalMsgEl = document.getElementById('modal-message');
+            if (modalMsgEl) modalMsgEl.innerText = msg;
+            
+            const modalEl = document.getElementById(id);
+            if (modalEl) modalEl.style.display = 'block';
+        }
+        
+        function closeModal(id = 'confirmModal') {
+            const modalEl = document.getElementById(id);
+            if (modalEl) modalEl.style.display = 'none';
+            
+            if (id === 'confirmModal') {
+                modalCallback = null;
+            }
+        }
+
+        function confirmAction() {
+            if(modalCallback) modalCallback();
+            closeModal();
+        }
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            if (!t) return;
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            // Vérifie si l'ID est la modale de listes pour afficher l'erreur correctement
+            if (id === 'clearListsModal') {
+                 showToast(`Erreur de sélection: ${msg}`);
+                 return;
+            }
+            if (el) {
+                el.innerText = msg;
+                el.style.display = 'block';
+                setTimeout(() => el.style.display = 'none', 3000);
+            } else {
+                showToast(`Erreur: ${msg}`);
+            }
+        }
+        function showSuccess(id, msg) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        // Fermeture des modales au clic extérieur
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
