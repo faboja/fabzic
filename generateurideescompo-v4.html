@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur d'Idées Musicales V4</title>
+    <title>Générateur d'idées musicales V4</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -85,7 +85,7 @@
             font-weight: 700;
             padding: 10px 0;
             margin-bottom: 15px;
-            border-bottom: 3px solid var(--primary); /* Bordure verte */
+            border-bottom: 1px solid var(--primary); /* Bordure plus fine */
             color: var(--section-title-color); /* Texte vert foncé */
             display: flex;
             align-items: center;
@@ -407,7 +407,7 @@
 <body>
 
     <div class="container">
-        <h1>Générateur d'Idées Musicales</h1>
+        <h1>Générateur d'idées musicales</h1>
         <div class="button-group">
             <button onclick="tirer()">🎲 Lancer le dé</button>
             <button class="secondary" onclick="copierResultat()">📋 Copier</button>
@@ -445,7 +445,6 @@
     <!-- Section Gestion (Pliable) -->
     <div class="manage-section">
         <div class="collapsible-header" onclick="toggleSection('manage-section')">
-            <!-- MODIFICATION: "Gérer / Supprimer" devient "Gérer les catégories" -->
             <h2>🗂️ Gérer les catégories</h2>
             <span class="arrow">▼</span>
         </div>
@@ -460,7 +459,6 @@
             <h3>Nouvelle catégorie</h3>
             <input type="text" id="new-category-name" placeholder="Nom de la catégorie (ex: Instruments)">
             
-            <!-- MODIFICATION: Correction de la capitalisation -->
             <label for="new-category-part">Partie d'appartenance:</label>
             <select id="new-category-part"></select>
 
@@ -470,12 +468,10 @@
 
             <div style="margin-top: 20px;">
                 <h3>Catégories existantes</h3>
-                <!-- DIV MANQUANT AJOUTÉ ICI -->
                 <div id="categories-list"></div>
             </div>
 
             <div style="text-align: center; margin-top: 30px;">
-                <!-- MODIFICATION: Les liens utilisent la couleur verte (--primary) -->
                 <a href="javascript:void(0);" onclick="showClearListsSelectionModal()" style="color: var(--primary); font-size: 0.8em; text-decoration: none;">⚠️ Vider les listes (Sélection)</a>
                  | 
                 <a href="javascript:void(0);" onclick="showFullResetModal()" style="color: var(--primary); font-size: 0.8em; text-decoration: none;">♻️ Restaurer les listes d'origine</a>
@@ -527,22 +523,22 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // --- DONNÉES PAR DÉFAUT (MISES À JOUR AVEC VOTRE FICHIER CSV) ---
+        // --- DONNÉES PAR DÉFAUT (MISES À JOUR AVEC VOTRE FICHIER CSV ET CORRIGÉES) ---
         const defaultData = {
             // Catégories du CSV (Ambiance, Structure, Signature, Style, Figure)
             ambiances: ["Joyeuse", "Mélancolique", "Triste", "Mystérieuse", "Épique", "Douce", "Intense", "Relaxante", "Agressive", "Cinématique", "Aventureuse", "Sombre"],
-            structures: ["C R", "C R C", "C R C P C R C", "C C R R", "C R P C", "I C P R R C PR R P S PR R O", "I C PR C PR R P/S R", "I P C R P C R O", "I C P R R O"],
-            signatures: ["4/4", "3/4", "6/8", "12/8", "5/4", "9/4", "12/4", "5/2", "7/2", "1/2", "2/4", "3/8", "7/8", "13/8", "15/8", "7/4", "13/4", "15/4"],
+            structures: ["C R", "C R C", "C R C P C R C", "C C R R", "C R P C", "I C P R R C PR R P S PR R O", "I C PR C PR R P/S R"],
+            signatures: ["4/4", "3/4", "6/8", "12/8", "5/4", "9/4", "12/4", "5/2", "7/2"],
             figures: ["blanche | noire | noire", "noire | blanche | noire", "noire | noire | blanche", "noire | noire | noire | noire", "blanche | 2 croches", "noire | demi-soupir | noire | noire", "noire | noire demi-soupir | noire", "noire | noire | noire demi-soupir", "soupir | noire | noire | noire", "noire | soupir | noire | noire", "noire | noire | soupir | noire", "noire | noire | noire | soupir", "blanche | soupir | noire", "soupir | blanche | noire", "noire | blanche | soupir", "soupir | blanche | soupir", "soupir | noire | noire", "blanche | noire | soupir"],
             styles: ["Metal", "Rock", "Hardrock", "Chanson à texte", "Jazz", "Classique", "Pop", "Électro", "Ambient", "Folk", "Reggae", "Blues", "Funk", "Hip-hop", "R&B", "Gospel", "Opéra", "Techno"],
             
-            // Nouvelles catégories du CSV (Instruments maître, Tonalités, Majeur ou Mineur, Qualité, Suite, Gamme, Modulation)
-            instruments: ["Piano classique", "Guitare classique", "Guitare folk", "Guitare électrique", "Synthétiseur", "Harpe", "Piano électrique", "Guitare basse", "Accordéon", "Orgue", "Trombone", "Tuba", "Bongos", "Cajón", "Congas", "Darbouka", "Djembe", "Flûte à bec", "Flûte traversière", "Saxophone", "Batterie acoustique", "Batterie électronique", "Gong", "Clavecin", "Violon", "Violoncelle", "Alto", "Contrebasse", "Cuivres ensemble", "Choeur", "Voix seule", "Marimba", "Glockenspiel", "Xylophone", "Vibraphone", "Kazoo"],
+            // Nouvelles catégories du CSV
+            instruments: ["Piano classique", "Guitare classique", "Guitare folk", "Guitare électrique", "Synthétiseur", "Harpe", "Piano électrique", "Guitare basse", "Accordéon", "Orgue", "Trombone", "Tuba", "Bongos", "Cajón", "Congas", "Darbouka", "Djembe"],
             tonalites: ["Do • C", "Do# / Réb • C#/Db", "Ré • D", "Ré# / Mib • D#/Eb", "Mi • E", "Fa • F", "Fa# / Solb • F#/Gb", "Sol • G", "Sol# / Lab • G#/Ab", "La • A", "La# / Sib • A#/Bb", "Si • B"],
-            majeurmineur: ["Majeur", "Mineur", "Ambigüe"],
+            majeurmineur: ["Majeur", "mineur"], // CORRECTION: "Mineur" en "mineur"
             qualites: ["Triade", "Tétrade", "Powercord", "Enrichi", "Altéré", "Suspendu", "Quartal", "Penta", "Cluster", "Augmenté", "Diminué"],
-            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "2•3•2•5", "2•5•3•5", "1•4•5", "3•6•2•5", "2•5•1•6", "1•5•4•6", "6•4•1•5", "1•4•6•5", "1•3•4•5"],
-            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Harmonique majeur", "Acoustique espagnol", "Byzantine", "Majeur", "Mineur", "Mélodique mineur", "Pentatonique", "Blues", "Chromatique", "Altérée", "Espagnole", "Hongroise", "Égyptienne", "Tzigane"],
+            suites: ["2•5•1", "1•4•1•5", "1•5•6•4", "1•4•5•4", "1•6•2•5", "2•3•2•5", "2•5•3•5"],
+            modes: ["Dorien", "Phrygien", "Lydien", "Mixolydien", "Harmonique majeur", "Acoustique espagnol", "Byzantine"],
             modulations: ["Accord pivot", "Glissement chromatique de notes", "Dominante secondaire • V de V", "Dominante secondaire • IV de IV", "À 11h45 sur cycle des quintes", "À partir du degré I", "Avec accord parallèle vers cadence parfaite", "Par accord diminué", "Changement tonal", "Par l’armure", "Aucune"]
         };
 
@@ -552,13 +548,15 @@
             structures: { label: "Structure", icon: "🏗️" },
             tonalites: { label: "Tonalité", icon: "🎹" },
             modes: { label: "Mode/Gamme", icon: "🎶" },
-            qualites: { label: "Qualité d'accord", icon: "🎼" }, // Label ajusté
-            suites: { label: "Suite d’accords", icon: "🔄" }, // Label ajusté
-            signatures: { label: "Signature rythmique", icon: "4/4" }, // Label ajusté
-            figures: { label: "Figure rythmique", icon: "♩" }, // Label ajusté
+            qualites: { label: "Qualité d'accord", icon: "🎼" },
+            suites: { label: "Suite d’accords", icon: "🔄" },
+            // CHANGEMENT: Label et Icon pour Signature
+            signatures: { label: "Signature", icon: "✍🏻" }, 
+            // CHANGEMENT: Label pour Figure
+            figures: { label: "Figure", icon: "♩" }, 
             // NOUVELLES CATÉGORIES DU CSV
             instruments: { label: "Instruments maître", icon: "🎺" },
-            majeurmineur: { label: "Majeur ou Mineur", icon: "⚖️" },
+            majeurmineur: { label: "Majeur ou mineur", icon: "⚖️" },
             modulations: { label: "Modulation", icon: "➿" }
         };
 
@@ -566,7 +564,6 @@
         const defaultCategorySections = {
             style: { 
                 label: "Style", 
-                // AJOUT de 'instruments' dans la section Style
                 keys: ['ambiances', 'styles', 'instruments', 'structures'] 
             },
             temporal: { 
@@ -575,7 +572,6 @@
             },
             harmony: { 
                 label: "Harmonie", 
-                // AJOUT de 'majeurmineur' et 'modulations' dans la section Harmonie
                 keys: ['tonalites', 'majeurmineur', 'modes', 'qualites', 'suites', 'modulations'] 
             }
         };
@@ -601,7 +597,7 @@
             initData();
             updateResultDOM();
             updateCategorySelects();
-            afficherCategories(); // Maintenant que le div categories-list existe, cette ligne ne causera plus d'erreur.
+            afficherCategories(); 
             afficherElements();
             populateCategoryPartSelect(); 
             
@@ -789,500 +785,417 @@
         function applyValuesToDOM(results) {
             Object.keys(results).forEach(key => {
                 const el = document.getElementById(`res-${key}`);
-                if(el) el.innerText = results[key];
+                if (el) el.innerText = results[key];
             });
         }
 
         function animateValue(id, value, delay) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            
             setTimeout(() => {
-                const el = document.getElementById(id);
-                if(el) {
-                    el.classList.add('spinning');
-                    el.innerText = value;
-                    setTimeout(() => el.classList.remove('spinning'), 500);
-                }
+                el.innerText = value;
+                el.classList.add('spinning');
+                setTimeout(() => el.classList.remove('spinning'), 500);
             }, delay);
         }
 
-        // --- GESTION DES LISTES & CATEGORIES ---
-
-        function toggleSection(id) {
-            const el = document.getElementById(id);
-            const isActive = el.classList.contains('active');
-            
-            // Ferme tout
-            document.querySelectorAll('.collapsible-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
-
-            // Ouvre si c'était fermé
-            if(!isActive) {
-                el.classList.add('active');
-                // Trouve la flèche correspondante
-                el.previousElementSibling.querySelector('.arrow').style.transform = 'rotate(180deg)';
-            }
-        }
-
-        // Remplir le select de la partie d'appartenance
-        function populateCategoryPartSelect() {
-            const select = document.getElementById('new-category-part');
-            if (!select) return;
-
-            select.innerHTML = '';
-            
-            // Utiliser les labels des sections
-            Object.keys(categorySectionsState).forEach(key => {
-                const label = categorySectionsState[key].label;
-                const opt = new Option(label, label); // Label utilisateur = Style, Rythmique, Harmonie
-                select.add(opt);
-            });
-        }
-
+        // --- GESTION AJOUTS ---
         function updateCategorySelects() {
-            const addSel = document.getElementById('category');
-            const manageSel = document.getElementById('manage-category');
-            if (!addSel || !manageSel) return; 
-            
-            addSel.innerHTML = '';
-            manageSel.innerHTML = '';
-
-            // Assure l'utilisation des labels mis à jour
-            Object.keys(categories).forEach(key => {
-                const opt = new Option(categories[key].label, key);
-                addSel.add(opt.cloneNode(true));
-                manageSel.add(opt);
-            });
-        }
-
-        function afficherCategories() {
-            const list = document.getElementById('categories-list');
-            if (!list) {
-                console.error("L'élément 'categories-list' est manquant dans le DOM.");
-                return;
-            }
-            list.innerHTML = '';
-
-            // On itère sur la structure des sections pour afficher les catégories groupées
-            Object.keys(categorySectionsState).forEach(sectionKey => {
-                const section = categorySectionsState[sectionKey];
-                
-                const sectionTitle = document.createElement('h4');
-                sectionTitle.style.cssText = 'margin-top: 15px; margin-bottom: 5px; font-weight: bold; color: var(--primary); border-bottom: 1px dashed var(--secondary); padding-bottom: 5px;';
-                sectionTitle.innerText = section.label;
-                list.appendChild(sectionTitle);
-
-                const container = document.createElement('div');
-                container.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;';
-                
-                let count = 0;
-                section.keys.forEach(key => {
-                    const cat = categories[key];
-                    // Vérifier si la catégorie existe dans l'objet categories (il peut y avoir des clés orphelines)
-                    if (cat) {
-                        const div = document.createElement('div');
-                        div.className = 'list-item';
-                        div.innerHTML = `${cat.icon} ${cat.label} <span class="delete-btn" onclick="askDeleteCategory('${key}')">&times;</span>`;
-                        container.appendChild(div);
-                        count++;
-                    }
-                });
-
-                if (count === 0) {
-                    const p = document.createElement('p');
-                    p.style.cssText = 'font-size: 0.9em; color: #999; margin-left: 5px;';
-                    p.innerText = "Aucune catégorie attribuée ici.";
-                    container.appendChild(p);
+            const selects = ['category', 'manage-category'];
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                if(sel) {
+                    sel.innerHTML = '';
+                    Object.keys(categories).forEach(key => {
+                        const opt = document.createElement('option');
+                        opt.value = key;
+                        opt.text = categories[key].label;
+                        sel.appendChild(opt);
+                    });
                 }
-
-                list.appendChild(container);
             });
         }
-
-        function afficherElements() {
-            const catSelect = document.getElementById('manage-category');
-            const list = document.getElementById('items-list');
-
-            if(!catSelect || !list) return;
-
-            const catKey = catSelect.value;
-            if(!catKey) {
-                list.innerHTML = '<em>Sélectionnez une catégorie pour voir ses éléments.</em>';
-                return;
-            }
-
-            const items = data[catKey] || [];
-            list.innerHTML = '';
-
-            if(items.length === 0) list.innerHTML = '<em>Aucun élément.</em>';
-
-            items.forEach((item, idx) => {
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `${item} <span class="delete-btn" onclick="askDeleteItem('${catKey}', ${idx})">&times;</span>`;
-                list.appendChild(div);
+        
+        // Remplir la liste des parties pour la création de catégorie
+        function populateCategoryPartSelect() {
+            const sel = document.getElementById('new-category-part');
+            if(!sel) return;
+            sel.innerHTML = '';
+            
+            Object.keys(partToKeyMap).forEach(label => {
+                const opt = document.createElement('option');
+                opt.value = partToKeyMap[label]; // La valeur est la clé interne (ex: 'style')
+                opt.text = label; // Le texte est le label utilisateur (ex: 'Style')
+                sel.appendChild(opt);
             });
         }
 
         function ajouterElements() {
             const cat = document.getElementById('category').value;
             const input = document.getElementById('new-item');
-            const raw = input.value.trim();
+            const items = input.value.split(',').map(s => s.trim()).filter(s => s);
+            const errorDiv = document.getElementById('add-error');
+            const successDiv = document.getElementById('add-success');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
 
-            if(!raw) return showError('add-error', "Le champ est vide.");
+            if (items.length === 0) {
+                errorDiv.innerText = "Veuillez entrer au moins un élément.";
+                errorDiv.style.display = 'block';
+                return;
+            }
 
-            const itemsToAdd = raw.split(',').map(s => s.trim()).filter(s => s);
-            let count = 0;
-
-            if(!data[cat]) data[cat] = [];
-
-            itemsToAdd.forEach(item => {
-                // Vérification simple d'existence pour éviter les doublons
-                if(!data[cat].map(s => s.toLowerCase()).includes(item.toLowerCase())) {
+            if (!data[cat]) data[cat] = [];
+            
+            let addedCount = 0;
+            items.forEach(item => {
+                if (!data[cat].includes(item)) {
                     data[cat].push(item);
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                saveData();
+                input.value = '';
+                successDiv.innerText = `${addedCount} élément(s) ajouté(s) à ${categories[cat].label} !`;
+                successDiv.style.display = 'block';
+                afficherElements(); // Refresh view list if visible
+            } else {
+                errorDiv.innerText = "Ces éléments existent déjà.";
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // --- GESTION CATÉGORIES ---
+        function ajouterCategorie() {
+            const name = document.getElementById('new-category-name').value.trim();
+            const partKey = document.getElementById('new-category-part').value; // Récupère la clé de section (ex: 'style')
+            
+            const errorDiv = document.getElementById('category-error');
+            const successDiv = document.getElementById('category-success');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (!name) {
+                errorDiv.innerText = "Nom de catégorie requis.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Création d'un ID simplifié
+            const id = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (categories[id] || data[id]) {
+                errorDiv.innerText = "Cette catégorie existe déjà (ID conflit).";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Ajout
+            categories[id] = { label: name, icon: '🏷️' };
+            data[id] = [];
+            
+            // Ajout à la section correspondante
+            if (categorySectionsState[partKey]) {
+                categorySectionsState[partKey].keys.push(id);
+            } else {
+                 // Fallback si jamais la clé n'est pas trouvée (ne devrait pas arriver)
+                 categorySectionsState['style'].keys.push(id);
+            }
+
+            saveCategories();
+            saveData();
+            saveSections(); // Sauvegarde de la structure des sections
+
+            updateCategorySelects();
+            document.getElementById('new-category-name').value = '';
+            
+            successDiv.innerText = `Catégorie "${name}" créée dans la partie sélectionnée !`;
+            successDiv.style.display = 'block';
+            
+            // Mise à jour de l'affichage
+            afficherCategories();
+            updateResultDOM(); // Reconstruit l'interface principale
+        }
+
+        // Affiche la liste des catégories avec bouton de suppression
+        function afficherCategories() {
+            const container = document.getElementById('categories-list');
+            if(!container) return;
+            
+            container.innerHTML = '';
+            
+            // On itère sur les sections pour afficher les catégories groupées (optionnel, mais plus clair)
+            // Ou simplement lister tout. Ici, listons tout en indiquant la section.
+            
+            const list = document.createElement('div');
+            list.className = 'list-container';
+            
+            Object.keys(categories).forEach(catId => {
+                // Trouver à quelle section appartient cette catégorie
+                let sectionLabel = "Aucune";
+                Object.values(categorySectionsState).forEach(sec => {
+                    if(sec.keys.includes(catId)) sectionLabel = sec.label;
+                });
+                
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    ${categories[catId].icon} <strong>${categories[catId].label}</strong> <small>(${sectionLabel})</small>
+                    <span class="delete-btn" onclick="confirmerSuppressionCategorie('${catId}')" title="Supprimer">×</span>
+                `;
+                list.appendChild(div);
+            });
+            
+            container.appendChild(list);
+        }
+
+        function confirmerSuppressionCategorie(catId) {
+            // Empêcher la suppression des catégories par défaut 'styles', 'ambiances' etc si on veut être strict, 
+            // mais ici on autorise tout sauf si bug.
+            showModal(`Voulez-vous vraiment supprimer la catégorie "${categories[catId].label}" et toutes ses données ?`, () => {
+                supprimerCategorie(catId);
+            });
+        }
+
+        function supprimerCategorie(catId) {
+            delete categories[catId];
+            delete data[catId];
+            
+            // Retirer de la section
+            Object.keys(categorySectionsState).forEach(secKey => {
+                categorySectionsState[secKey].keys = categorySectionsState[secKey].keys.filter(k => k !== catId);
+            });
+            
+            // Retirer des résultats courants
+            delete currentDraw.results[catId];
+
+            saveCategories();
+            saveData();
+            saveSections();
+            
+            updateCategorySelects();
+            afficherCategories();
+            afficherElements(); // Refresh item list if it was selected
+            updateResultDOM(); // Refresh main UI
+            
+            showToast("Catégorie supprimée");
+            closeModal();
+        }
+
+        // --- GESTION LISTES ---
+        function afficherElements() {
+            const cat = document.getElementById('manage-category').value;
+            const listDiv = document.getElementById('items-list');
+            listDiv.innerHTML = '';
+            
+            if (!data[cat]) return;
+
+            data[cat].forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `${item} <span class="delete-btn" onclick="supprimerElement('${cat}', ${index})">&times;</span>`;
+                listDiv.appendChild(div);
+            });
+        }
+
+        function supprimerElement(cat, index) {
+            data[cat].splice(index, 1);
+            saveData();
+            afficherElements();
+        }
+
+        // --- MODAL Vider les listes (SÉLECTION) ---
+        function showClearListsSelectionModal() {
+            const container = document.getElementById('clearListsCheckboxes');
+            container.innerHTML = '';
+
+            Object.keys(categories).forEach(key => {
+                const count = data[key] ? data[key].length : 0;
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `
+                    <input type="checkbox" value="${key}">
+                    <span>${categories[key].icon} ${categories[key].label} <small>(${count} éléments)</small></span>
+                `;
+                container.appendChild(label);
+            });
+
+            document.getElementById('clearListsModal').style.display = 'block';
+        }
+
+        function clearSelectedLists() {
+            const checkboxes = document.querySelectorAll('#clearListsCheckboxes input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                alert("Veuillez sélectionner au moins une liste.");
+                return;
+            }
+
+            let count = 0;
+            checkboxes.forEach(cb => {
+                const key = cb.value;
+                if (data[key]) {
+                    data[key] = []; // On vide le tableau
                     count++;
                 }
             });
 
-            if(count > 0) {
-                saveData();
-                input.value = '';
-                showSuccess('add-success', `${count} élément(s) ajouté(s).`);
-                if(document.getElementById('manage-category').value === cat) afficherElements();
-            } else {
-                showError('add-error', "Ces éléments existent déjà ou sont invalides.");
-            }
-        }
-
-        function ajouterCategorie() {
-            const nameInput = document.getElementById('new-category-name');
-            const partSelect = document.getElementById('new-category-part');
-
-            const name = nameInput.value.trim();
-            const partLabel = partSelect.value;
-            const sectionKey = partToKeyMap[partLabel]; // Clé interne (style, temporal, harmony)
-
-            if(!name) return showError('category-error', "Nom invalide.");
-            if(!sectionKey) return showError('category-error', "Partie d'appartenance invalide.");
-
-            // Créer un ID unique et simple (minuscules, sans caractères spéciaux)
-            const id = name.toLowerCase().replace(/[^a-z0-9]/g, ''); 
-            if(categories[id]) return showError('category-error', "Cette catégorie existe déjà (ID généré: "+id+")");
-
-            // 1. Ajouter à la liste des catégories
-            categories[id] = { label: name, icon: '🏷️' };
-            
-            // 2. Initialiser la liste des éléments
-            data[id] = [];
-            
-            // 3. Ajouter la clé à la section choisie dans l'état dynamique
-            if (categorySectionsState[sectionKey] && !categorySectionsState[sectionKey].keys.includes(id)) {
-                categorySectionsState[sectionKey].keys.push(id);
-                saveSections();
-            } else {
-                console.error("Erreur: Impossible d'ajouter la catégorie à la section. SectionKey:", sectionKey);
-            }
-            
-            // 4. Sauvegarder les changements
-            saveCategories();
             saveData();
-            
-            // 5. Mettre à jour l'interface
-            updateCategorySelects();
-            afficherCategories();
-            updateResultDOM();
-            
-            // 6. Afficher succès
-            nameInput.value = '';
-            // Ne pas réinitialiser partSelect pour permettre l'ajout rapide dans la même section
-            showSuccess('category-success', `Catégorie "${name}" créée et ajoutée à la partie "${partLabel}" !`);
+            closeModal('clearListsModal');
+            showToast(`${count} liste(s) vidée(s) avec succès.`);
+            afficherElements(); // Rafraichir si ouvert
         }
 
-        // --- SUPPRESSION ---
-        function askDeleteCategory(key) {
-            modalCallback = () => {
-                // 1. Retirer la clé de toutes les sections
-                Object.keys(categorySectionsState).forEach(secKey => {
-                    categorySectionsState[secKey].keys = categorySectionsState[secKey].keys.filter(k => k !== key);
-                });
-                saveSections(); // Sauvegarder la structure des sections mise à jour
 
-                // 2. Supprimer les données et la catégorie
-                delete categories[key];
-                delete data[key];
-                delete lockedFields[key];
-                
-                saveCategories();
-                saveData();
-                
-                // 3. Mettre à jour l'interface
-                updateCategorySelects();
-                afficherCategories();
-                updateResultDOM();
-                afficherElements();
-                showToast(`Catégorie "${key}" supprimée.`);
-            };
-            const catLabel = categories[key] ? categories[key].label : key;
-            openModal(`Supprimer la catégorie "${catLabel}" ? Attention, cela va aussi retirer cette catégorie de l'affichage principal.`, 'confirmModal');
-        }
-
-        function askDeleteItem(cat, idx) {
-            const item = data[cat][idx];
-            modalCallback = () => {
-                data[cat].splice(idx, 1);
-                saveData();
-                afficherElements();
-                showToast(`Élément "${item}" supprimé.`);
-            };
-            openModal(`Supprimer "${item}" ?`, 'confirmModal');
-        }
-        
+        // --- RESET TOTAL ---
         function showFullResetModal() {
-            modalCallback = () => {
-                // Utilisation des nouvelles clés de stockage
-                localStorage.removeItem('musicData_v4');
-                localStorage.removeItem('musicCats_v4');
-                localStorage.removeItem('musicHist_v4'); 
-                localStorage.removeItem('musicSections_v4'); 
-                location.reload();
-            };
-            openModal("Reset Total (retour aux listes d'origine) ? Irréversible.", 'confirmModal');
+            showModal("⚠️ Attention ! Cela va écraser TOUTES vos modifications (catégories, items) et remettre les données d'usine. L'historique sera conservé.", () => {
+                fullReset();
+            });
         }
 
-        // --- HISTORIQUE & OUTILS ---
+        function fullReset() {
+            localStorage.removeItem('musicData_v4');
+            localStorage.removeItem('musicCats_v4');
+            localStorage.removeItem('musicSections_v4');
+            // On recharge la page pour réinitialiser proprement
+            location.reload();
+        }
 
+        // --- HISTORIQUE ---
         function sauvegarderTirage() {
-            if(!currentDraw.results || Object.keys(currentDraw.results).length === 0) return;
-            
-            const entry = JSON.parse(JSON.stringify(currentDraw));
+            const entry = {
+                date: new Date().toLocaleString(),
+                results: JSON.parse(JSON.stringify(currentDraw.results))
+            };
             drawHistory.unshift(entry);
-            
-            if(drawHistory.length > 30) drawHistory.pop();
+            if (drawHistory.length > 50) drawHistory.pop(); // Limite
             saveHistory();
             showToast("Tirage sauvegardé !");
         }
 
         function afficherHistorique() {
-            const container = document.getElementById('history-list');
-            if(!container) return;
-
-            container.innerHTML = '';
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
             
-            if(drawHistory.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#999;">Aucun historique.</p>';
+            if (drawHistory.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#666;">Aucun historique.</p>';
             } else {
-                drawHistory.forEach((draw, index) => {
+                drawHistory.forEach((entry, index) => {
                     const div = document.createElement('div');
                     div.className = 'history-item';
                     
-                    let summary = '';
-                    // Utilise les 3 premières clés trouvées pour le résumé
-                    const keys = Object.keys(draw.results).slice(0, 3);
-                    keys.forEach(k => {
-                        const label = categories[k] ? categories[k].label : k.charAt(0).toUpperCase() + k.slice(1);
-                        summary += `${label}: ${draw.results[k]} / `;
+                    let content = `<div class="history-item-header"><span>${entry.date}</span> <button class="secondary" style="font-size:0.8em; padding:2px 8px;" onclick="restaurerTirage(${index})">Recharger</button></div>`;
+                    content += `<div style="display:flex; flex-wrap:wrap; gap:5px;">`;
+                    
+                    Object.keys(entry.results).forEach(key => {
+                        // On essaie de récupérer le label de la catégorie, sinon on met la clé
+                        const catLabel = categories[key] ? categories[key].label : key;
+                        // On ignore duree et tempo pour l'affichage compact, ou on les met
+                        if(key !== 'duree' && key !== 'tempo') {
+                            content += `<span style="background:#ddd; padding:2px 6px; border-radius:4px; font-size:0.85em;"><b>${catLabel}:</b> ${entry.results[key]}</span>`;
+                        }
                     });
                     
-                    div.innerHTML = `
-                        <div class="history-item-header">
-                            <span>📅 ${draw.date}</span>
-                            <div style="display:flex; gap:5px;">
-                                <button class="secondary" style="padding:2px 8px; font-size:0.8em;" onclick="chargerTirage(${index})">Recharger</button>
-                                <button class="secondary" style="padding:2px 8px; font-size:0.8em;" onclick="supprimerHistoriqueItem(${index})">🗑️</button>
-                            </div>
-                        </div>
-                        <div style="font-size:0.9em; font-style:italic;">${summary.slice(0, -3) || 'Résultat vide'}</div>
-                    `;
-                    container.appendChild(div);
+                    // Ajout Tempo/Durée à la fin
+                    if(entry.results.tempo) content += `<span style="background:#b2dfdb; padding:2px 6px; border-radius:4px; font-size:0.85em;">⚡ ${entry.results.tempo}</span>`;
+                    
+                    content += `</div>`;
+                    div.innerHTML = content;
+                    list.appendChild(div);
                 });
             }
+            
             document.getElementById('historyModal').style.display = 'block';
         }
 
-        function chargerTirage(index) {
-            const draw = drawHistory[index];
-            currentDraw = JSON.parse(JSON.stringify(draw));
-            
-            lockedFields = {}; 
-            
-            updateResultDOM();
+        function restaurerTirage(index) {
+            currentDraw.results = JSON.parse(JSON.stringify(drawHistory[index].results));
             applyValuesToDOM(currentDraw.results);
-            
             closeHistoryModal();
             showToast("Tirage rechargé !");
         }
         
-        function supprimerHistoriqueItem(index) {
-            drawHistory.splice(index, 1);
-            saveHistory();
-            afficherHistorique();
-        }
-
-        function showClearHistoryModal() {
-            modalCallback = () => {
-                drawHistory = [];
-                saveHistory();
-                afficherHistorique();
-                showToast("Historique vidé.");
-                closeModal('confirmModal'); // S'assurer que le modal de confirmation est fermé
-                closeHistoryModal();
-            };
-            openModal("Vraiment tout effacer l'historique ?", 'confirmModal');
-        }
-
-        function copierResultat() {
-            let fullText = "";
-            
-            // Ordre des sections pour la copie : Style, Rythmique, Harmonie
-            const sectionOrder = ['style', 'temporal', 'harmony']; 
-
-            sectionOrder.forEach(sectionKey => {
-                const section = categorySectionsState[sectionKey];
-                
-                fullText += `--- ${section.label.toUpperCase()} ---\n`;
-                const allKeys = [...section.keys];
-                
-                if (sectionKey === 'temporal') {
-                    allKeys.push('tempo');
-                    allKeys.push('duree');
-                }
-                
-                allKeys.forEach(key => {
-                    if (currentDraw.results[key]) {
-                        let label = categories[key] ? categories[key].label : key.charAt(0).toUpperCase() + key.slice(1);
-                        // MAJ des libellés dans le texte copié
-                        if(key === 'duree') label = "Durée";
-                        if(key === 'tempo') label = "Tempo";
-                        
-                        fullText += `${label}: ${currentDraw.results[key]}\n`;
-                    }
-                });
-                fullText += "\n";
-            });
-            
-            fullText += `\n📅 ${currentDraw.date}`;
-
-            if (Object.keys(currentDraw.results).length > 0) {
-                 navigator.clipboard.writeText(fullText).then(() => showToast("Copié dans le presse-papier !"))
-                    .catch(err => console.error('Erreur de copie:', err));
-            } else {
-                 showToast("Aucun résultat à copier.");
-            }
-        }
-        
-        // --- UTILITAIRES ---
-        
-        function showClearListsSelectionModal() {
-            const checkboxesContainer = document.getElementById('clearListsCheckboxes');
-            if(!checkboxesContainer) return;
-            
-            checkboxesContainer.innerHTML = '';
-
-            const categoryKeys = Object.keys(categories);
-            if(categoryKeys.length === 0) {
-                showToast("Aucune catégorie à vider.");
-                return;
-            }
-
-            categoryKeys.forEach(key => {
-                const cat = categories[key];
-                const count = data[key] ? data[key].length : 0;
-                
-                const label = document.createElement('label');
-                label.className = 'checkbox-label';
-                label.innerHTML = `
-                    <input type="checkbox" name="listToClear" value="${key}">
-                    <span>${cat.icon} ${cat.label} (${count} éléments)</span>
-                `;
-                checkboxesContainer.appendChild(label);
-            });
-            
-            document.getElementById('clearListsModal').style.display = 'block';
-        }
-
-        function clearSelectedLists() {
-            const checkboxes = document.querySelectorAll('#clearListsCheckboxes input[name="listToClear"]:checked');
-            const listsToClear = Array.from(checkboxes).map(cb => cb.value);
-
-            if (listsToClear.length === 0) {
-                showToast("Veuillez sélectionner au moins une liste.");
-                return;
-            }
-
-            let clearedCount = 0;
-            listsToClear.forEach(key => {
-                if (data[key]) {
-                    data[key] = [];
-                    clearedCount++;
-                }
-            });
-
-            if (clearedCount > 0) {
-                saveData();
-                afficherElements();
-                updateResultDOM();
-                showToast(`${clearedCount} liste(s) vidée(s) avec succès.`);
-            }
-
-            closeModal('clearListsModal');
-        }
-
-        window.showClearListsSelectionModal = showClearListsSelectionModal;
-        window.clearSelectedLists = clearSelectedLists; 
-
-        function openModal(msg, id = 'confirmModal') {
-            const modalMsgEl = document.getElementById('modal-message');
-            if (modalMsgEl) modalMsgEl.innerText = msg;
-            
-            const modalEl = document.getElementById(id);
-            if (modalEl) modalEl.style.display = 'block';
-        }
-        
-        function closeModal(id = 'confirmModal') {
-            const modalEl = document.getElementById(id);
-            if (modalEl) modalEl.style.display = 'none';
-            
-            if (id === 'confirmModal') {
-                modalCallback = null;
-            }
-        }
-
-        function confirmAction() {
-            if(modalCallback) modalCallback();
-            closeModal();
-        }
         function closeHistoryModal() {
             document.getElementById('historyModal').style.display = 'none';
         }
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            if (!t) return;
-            t.innerText = msg;
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        }
-        function showError(id, msg) {
-            const el = document.getElementById(id);
-            // Vérifie si l'ID est la modale de listes pour afficher l'erreur correctement
-            if (id === 'clearListsModal') {
-                 showToast(`Erreur de sélection: ${msg}`);
-                 return;
+
+        function showClearHistoryModal() {
+            if(confirm("Vider tout l'historique ?")) {
+                drawHistory = [];
+                saveHistory();
+                afficherHistorique();
             }
-            if (el) {
-                el.innerText = msg;
-                el.style.display = 'block';
-                setTimeout(() => el.style.display = 'none', 3000);
-            } else {
-                showToast(`Erreur: ${msg}`);
-            }
-        }
-        function showSuccess(id, msg) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.innerText = msg;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 3000);
         }
 
-        // Fermeture des modales au clic extérieur
+        // --- UI UTILS ---
+        function copierResultat() {
+            let text = `🎵 Idée Musicale (${currentDraw.date})\n\n`;
+            
+            // Ordre logique
+            const orderedKeys = ['ambiances', 'styles', 'tempo', 'duree', 'signatures', 'tonalites'];
+            
+            // D'abord les clés principales ordonnées
+            orderedKeys.forEach(key => {
+                if (currentDraw.results[key]) {
+                    const label = categories[key] ? categories[key].label : (key === 'tempo' ? 'Tempo' : (key==='duree'?'Durée':key));
+                    text += `${label}: ${currentDraw.results[key]}\n`;
+                }
+            });
+            
+            // Ensuite le reste
+            Object.keys(currentDraw.results).forEach(key => {
+                if (!orderedKeys.includes(key)) {
+                    const label = categories[key] ? categories[key].label : key;
+                    text += `${label}: ${currentDraw.results[key]}\n`;
+                }
+            });
+
+            // Fallback for clipboard access in some environments
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            showToast("Copié dans le presse-papier !");
+        }
+
+        function toggleSection(id) {
+            const content = document.getElementById(id);
+            content.classList.toggle('active');
+            content.previousElementSibling.classList.toggle('active');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        // Generic Modal
+        function showModal(msg, callback) {
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('confirmModal').style.display = 'block';
+            modalCallback = callback;
+        }
+
+        function confirmAction() {
+            if (modalCallback) modalCallback();
+            closeModal();
+        }
+
+        function closeModal(id = 'confirmModal') {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'confirmModal') modalCallback = null;
+        }
+
+        // Close modal on click outside
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = "none";
